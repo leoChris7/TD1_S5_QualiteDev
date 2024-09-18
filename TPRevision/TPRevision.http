@@ -1,0 +1,6 @@
+@TPRevision_HostAddress = http://localhost:5012
+
+GET {{TPRevision_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
