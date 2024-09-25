@@ -17,6 +17,7 @@ namespace tprevision.Controller
     {
         private readonly MarqueManager marqueManager;
 
+        [ActivatorUtilitiesConstructor]
         public MarquesController(MarqueManager _manager)
         {
             marqueManager = _manager;

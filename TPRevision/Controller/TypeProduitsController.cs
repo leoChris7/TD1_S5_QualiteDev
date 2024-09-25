@@ -15,6 +15,7 @@ namespace tprevision.Controller
     {
         private readonly TypeProduitManager _typeProduitRepository;
 
+        [ActivatorUtilitiesConstructor]
         public TypeProduitsController(TypeProduitManager typeProduitRepository)
         {
             _typeProduitRepository = typeProduitRepository;
