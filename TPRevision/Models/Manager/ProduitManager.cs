@@ -1,71 +1,65 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using TPRevision.Models.EntityFramework;
-using tprevision.Models.Repository;
-using Microsoft.EntityFrameworkCore;
-
-namespace tprevision.Models.Manager
+﻿namespace tprevision.Models.Manager
 {
-    public class ProduitManager : IDataRepository<Produit>
+    using Microsoft.AspNetCore.Mvc;
+    using Microsoft.EntityFrameworkCore;
+    using TPRevision.Models.EntityFramework;
+    using System.Collections.Generic;
+    using System.Linq;
+    using global::tprevision.Models.Repository;
+    using Microsoft.AspNetCore.Http.HttpResults;
+
+    namespace tprevision.Models.DataManager
     {
-        readonly ProduitDbContext _context;
-
-        public ProduitManager() { }
-
-        public ProduitManager(ProduitDbContext context)
+        public class ProduitManager : IDataRepository<Produit>
         {
-            _context = context;
-        }
+            private readonly ProduitDbContext _context;
 
-        public async Task<ActionResult<Produit>> AddAsync(Produit entity)
-        {
-            _context.Produits.Add(entity);
-            await _context.SaveChangesAsync();
-            return new OkObjectResult(entity);
-        }
-
-        public async Task<ActionResult<Produit>> DeleteAsync(Produit entity)
-        {
-            var existingEntity = await _context.Produits.FindAsync(entity.IdProduit);
-            if (existingEntity == null)
+            public ProduitManager(ProduitDbContext context)
             {
-                return new NotFoundResult();
+                _context = context;
             }
 
-            _context.Produits.Remove(existingEntity);
-            await _context.SaveChangesAsync();
-            return new OkObjectResult(existingEntity);
-        }
+            public ProduitManager() { }
 
-        // Obtenir un Produit par son ID
-        public async Task<Produit> GetByIdAsync(int id)
-        {
-            return await _context.Produits.FindAsync(id);
-        }
-
-        // Obtenir un Produit par chaîne de caractères (ex. nom produit)
-        public async Task<Produit> GetByStringAsync(string str)
-        {
-            return await _context.Produits.FirstOrDefaultAsync(p => p.NomProduit == str);
-        }
-
-        public async Task<ActionResult<Produit>> UpdateAsync(Produit entityToUpdate, Produit entity)
-        {
-            var existingEntity = await _context.Produits.FindAsync(entityToUpdate.IdProduit);
-            if (existingEntity == null)
+            public virtual ActionResult<IEnumerable<Produit>> GetAll()
             {
-                return new NotFoundResult();
+                return _context.Produits.ToList();
             }
 
-            _context.Entry(existingEntity).CurrentValues.SetValues(entity);
-            await _context.SaveChangesAsync();
+            public virtual ActionResult<Produit> GetById(int id)
+            {
+                var produit = _context.Produits.FirstOrDefault(p => p.IdProduit == id);
 
-            return new OkObjectResult(existingEntity);
-        }
+                return produit;
+            }
 
-        async Task<IEnumerable<Produit>> IDataRepository<Produit>.GetAllAsync()
-        {
-            var entities = await _context.Produits.ToListAsync();
-            return entities;
+            public virtual void Post(Produit entity)
+            {
+                _context.Produits.Add(entity);
+                _context.SaveChanges();
+            }
+
+            public virtual void Put(Produit produitToUpdate, Produit entity)
+            {
+                _context.Entry(produitToUpdate).State = EntityState.Modified;
+                produitToUpdate.NomProduit = entity.NomProduit;
+                // Ajoutez d'autres propriétés à mettre à jour si nécessaire
+                _context.SaveChanges();
+            }
+
+            public virtual void Delete(Produit entity)
+            {
+                _context.Produits.Remove(entity);
+                _context.SaveChanges();
+            }
+
+            public virtual ActionResult<Produit> GetByString(string str)
+            {
+                var produit = _context.Produits.FirstOrDefault(tp => tp.NomProduit == str);
+
+                return produit;
+            }
         }
     }
+
 }

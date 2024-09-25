@@ -1,73 +1,57 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using tprevision.Models.Repository;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Mvc;
 using TPRevision.Models.EntityFramework;
+using System.Collections.Generic;
+using System.Linq;
+using tprevision.Models.Repository;
+using tprevision.Models.ModelTemplate;
 
-namespace tprevision.Models.Manager
+namespace tprevision.Models.DataManager
 {
     public class MarqueManager : IDataRepository<Marque>
     {
-        readonly ProduitDbContext _context;
-        public MarqueManager()
-        {
-        }
+        private readonly ProduitDbContext? _context;
 
         public MarqueManager(ProduitDbContext context)
         {
             _context = context;
         }
 
-        public async Task<ActionResult<Marque>> AddAsync(Marque entity)
+        public MarqueManager() { }
+
+
+        public virtual ActionResult<IEnumerable<Marque>> GetAll()
+        {
+            return _context.Marques.ToList();
+        }
+
+        public virtual ActionResult<Marque> GetById(int id)
+        {
+            return _context.Marques.FirstOrDefault(m => m.Idmarque == id);
+        }
+
+        public virtual ActionResult<Marque> GetByString(string nom)
+        {
+            return _context.Marques.FirstOrDefault(m => m.NomMarque.ToUpper() == nom.ToUpper());
+        }
+
+        public virtual void Post(Marque entity)
         {
             _context.Marques.Add(entity);
-            await _context.SaveChangesAsync();
-            return new OkObjectResult(entity);
+            _context.SaveChanges();
         }
 
-        public async Task<ActionResult<Marque>> DeleteAsync(Marque entity)
+        public virtual void Put(Marque marqueToUpdate, Marque entity)
         {
-            var existingEntity = await _context.Marques.FindAsync(entity.Idmarque);
-            if (existingEntity == null)
-            {
-                return new NotFoundResult();
-            }
-
-            _context.Marques.Remove(existingEntity);
-            await _context.SaveChangesAsync();
-            return new OkObjectResult(existingEntity);
+            _context.Entry(marqueToUpdate).State = EntityState.Modified;
+            marqueToUpdate.NomMarque = entity.NomMarque;
+            _context.SaveChanges();
         }
 
-
-        // Obtenir une Marque par son ID
-        public async Task<Marque> GetByIdAsync(int id)
+        public virtual void Delete(Marque entity)
         {
-            return await _context.Marques.FindAsync(id);
-        }
-
-        // Obtenir une Marque par chaîne de caractères
-        public async Task<Marque> GetByStringAsync(string str)
-        {
-            return await _context.Marques.FirstOrDefaultAsync(m => m.NomMarque == str);
-        }
-
-        public async Task<ActionResult<Marque>> UpdateAsync(Marque entityToUpdate, Marque entity)
-        {
-            var existingEntity = await _context.Marques.FindAsync(entityToUpdate.Idmarque);
-            if (existingEntity == null)
-            {
-                return new NotFoundResult();
-            }
-
-            _context.Entry(existingEntity).CurrentValues.SetValues(entity);
-            await _context.SaveChangesAsync();
-
-            return new OkObjectResult(existingEntity);
-        }
-
-        async Task<IEnumerable<Marque>> IDataRepository<Marque>.GetAllAsync()
-        {
-            var entities = await _context.Marques.ToListAsync();
-            return entities;
+            _context.Marques.Remove(entity);
+            _context.SaveChanges();
         }
     }
 }

@@ -1,75 +1,59 @@
-﻿namespace tprevision.Models.Manager
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using TPRevision.Models.EntityFramework;
+using System.Collections.Generic;
+using System.Linq;
+using tprevision.Models.Repository;
+
+namespace tprevision.Models.DataManager
 {
-    using global::tprevision.Models.Repository;
-    using Microsoft.AspNetCore.Mvc;
-    using Microsoft.EntityFrameworkCore;
-    using TPRevision.Models.EntityFramework;
-
-    namespace tprevision.Models.Manager
+    public class TypeProduitManager : IDataRepository<TypeProduit>
     {
-        public class TypeProduitManager : IDataRepository<TypeProduit>
+        private readonly ProduitDbContext _context;
+
+        public TypeProduitManager(ProduitDbContext context)
         {
-            readonly ProduitDbContext _context;
+            _context = context;
+        }
 
-            public TypeProduitManager() { }
+        public TypeProduitManager() { }
 
-            public TypeProduitManager(ProduitDbContext context)
-            {
-                _context = context;
-            }
+        public virtual ActionResult<IEnumerable<TypeProduit>> GetAll()
+        {
+            return _context.Types.ToList();
+        }
 
-            public async Task<ActionResult<TypeProduit>> AddAsync(TypeProduit entity)
-            {
-                _context.Types.Add(entity);
-                await _context.SaveChangesAsync();
-                return new OkObjectResult(entity);
-            }
+        public virtual ActionResult<TypeProduit> GetById(int id)
+        {
+            var typeProduit = _context.Types.FirstOrDefault(tp => tp.Idtypeproduit == id);
 
-            public async Task<ActionResult<TypeProduit>> DeleteAsync(TypeProduit entity)
-            {
-                var existingEntity = await _context.Types.FindAsync(entity.Idtypeproduit);
-                if (existingEntity == null)
-                {
-                    return new NotFoundResult();
-                }
+            return typeProduit;
+        }
 
-                _context.Types.Remove(existingEntity);
-                await _context.SaveChangesAsync();
-                return new OkObjectResult(existingEntity);
-            }
+        public virtual void Post(TypeProduit entity)
+        {
+            _context.Types.Add(entity);
+            _context.SaveChanges();
+        }
 
-            // Obtenir un TypeProduit par son ID
-            public async Task<TypeProduit> GetByIdAsync(int id)
-            {
-                return await _context.Types.FindAsync(id);
-            }
+        public virtual void Put(TypeProduit typeProduitToUpdate, TypeProduit entity)
+        {
+            _context.Entry(typeProduitToUpdate).State = EntityState.Modified;
+            typeProduitToUpdate.nomtypeproduit = entity.nomtypeproduit;
+            _context.SaveChanges();
+        }
 
-            // Obtenir un TypeProduit par chaîne de caractères (ex. nom type)
-            public async Task<TypeProduit> GetByStringAsync(string str)
-            {
-                return await _context.Types.FirstOrDefaultAsync(tp => tp.nomtypeproduit == str);
-            }
+        public virtual void Delete(TypeProduit entity)
+        {
+            _context.Types.Remove(entity);
+            _context.SaveChanges();
+        }
 
-            public async Task<ActionResult<TypeProduit>> UpdateAsync(TypeProduit entityToUpdate, TypeProduit entity)
-            {
-                var existingEntity = await _context.Types.FindAsync(entityToUpdate.Idtypeproduit);
-                if (existingEntity == null)
-                {
-                    return new NotFoundResult();
-                }
+        public virtual ActionResult<TypeProduit> GetByString(string str)
+        {
+            var typeProduit = _context.Types.FirstOrDefault(tp => tp.nomtypeproduit == str);
 
-                _context.Entry(existingEntity).CurrentValues.SetValues(entity);
-                await _context.SaveChangesAsync();
-
-                return new OkObjectResult(existingEntity);
-            }
-
-            async Task<IEnumerable<TypeProduit>> IDataRepository<TypeProduit>.GetAllAsync()
-            {
-                var entities = await _context.Types.ToListAsync();
-                return entities;
-            }
+            return typeProduit;
         }
     }
-
 }

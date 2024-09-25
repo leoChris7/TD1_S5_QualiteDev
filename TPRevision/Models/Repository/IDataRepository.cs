@@ -4,11 +4,11 @@ namespace tprevision.Models.Repository
 {
     public interface IDataRepository<TEntity>
     {
-        Task<IEnumerable<TEntity>> GetAllAsync();
-        Task<TEntity> GetByIdAsync(int id);
-        Task<TEntity> GetByStringAsync(string str);
-        Task<ActionResult<TEntity>> AddAsync(TEntity entity);
-        Task<ActionResult<TEntity>> UpdateAsync(TEntity entityToUpdate, TEntity entity);
-        Task<ActionResult<TEntity>> DeleteAsync(TEntity entity);
+        ActionResult<IEnumerable<TEntity>> GetAll();
+        ActionResult<TEntity> GetById(int id);
+        ActionResult<TEntity> GetByString(string str);
+        void Post(TEntity entity);
+        void Put(TEntity entityToUpdate, TEntity entity);
+        void Delete(TEntity entity);
     }
 }
