@@ -30,7 +30,8 @@ namespace tprevision.Controller
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Marque>>> GetMarques()
         {
-            return await Task.FromResult(marqueManager.GetAll());
+            var result = await marqueManager.GetAllAsync();
+            return result;
         }
 
         // GET: api/Marques/5
@@ -39,12 +40,13 @@ namespace tprevision.Controller
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<Marque>> GetMarqueById(int id)
         {
-            var marqueById = marqueManager.GetById(id);
+            var marqueById = await marqueManager.GetByIdAsync(id);
             //var utilisateur = await _context.Utilisateurs.FindAsync(id);
-            if (marqueById == null)
+            if (marqueById.Value == null)
             {
                 return NotFound();
             }
+            
             return marqueById;
         }
 
@@ -57,7 +59,7 @@ namespace tprevision.Controller
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<Marque>> GetMarqueByString(String? str)
         {
-            var marqueByString = marqueManager.GetByString(str);
+            var marqueByString = await marqueManager.GetByStringAsync(str);
             //var utilisateur = await _context.Utilisateurs.FindAsync(id);
             if (marqueByString == null)
             {
@@ -78,14 +80,14 @@ namespace tprevision.Controller
             {
                 return BadRequest();
             }
-            var marqueToUpdate = marqueManager.GetById(id);
+            var marqueToUpdate = await marqueManager.GetByIdAsync(id);
             if (marqueToUpdate == null)
             {
                 return NotFound();
             }
             else
             {
-                marqueManager.Put(marqueToUpdate.Value, marque);
+                await marqueManager.PutAsync(marqueToUpdate.Value, marque);
                 return NoContent();
             }
         }
@@ -103,7 +105,7 @@ namespace tprevision.Controller
                 return BadRequest(ModelState);
             }
 
-            marqueManager.Post(NouvelleMarque);
+            await marqueManager.PostAsync(NouvelleMarque);
             return CreatedAtAction("GetMarqueById", new { id = NouvelleMarque.Idmarque }, NouvelleMarque);
         }
 
@@ -112,18 +114,19 @@ namespace tprevision.Controller
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteMarque(int id)
         {
-            var marque = marqueManager.GetById(id);
-            if (marque == null)
+            var marque = await marqueManager.GetByIdAsync(id);
+            if (marque.Value == null) 
             {
                 return NotFound();
             }
-            marqueManager.Delete(marque.Value);
+            await marqueManager.DeleteAsync(marque.Value);
             return NoContent();
         }
 
-/*        private bool MarqueExists(int id)
-        {
-            return _context.Marques.Any(e => e.Idmarque == id);
-        }*/
+
+        /*        private bool MarqueExists(int id)
+                {
+                    return _context.Marques.Any(e => e.Idmarque == id);
+                }*/
     }
 }

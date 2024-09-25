@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using tprevision.Models.DataManager;
-using tprevision.Models.Manager.tprevision.Models.DataManager;
+using tprevision.Models.DataManager;
 using tprevision.Models.Repository;
 using TPRevision.Models.EntityFramework;
 

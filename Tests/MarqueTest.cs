@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using System.Collections.Generic;
@@ -34,17 +35,17 @@ namespace Tests
             };
 
             _mockRepository
-                .Setup(repo => repo.GetAll())
-                .Returns(marques);
+                .Setup(repo => repo.GetAllAsync())
+                .ReturnsAsync(marques);
 
             // Act
             var actionResult = await _marquesController.GetMarques();
 
             // Assert
             var result = actionResult.Result as OkObjectResult;
-            Assert.IsNotNull(result);
-            Assert.IsInstanceOfType(result.Value, typeof(IEnumerable<Marque>));
-            Assert.AreEqual(2, ((IEnumerable<Marque>)result.Value).Count());
+            Assert.IsNotNull(actionResult.Value);
+            Assert.IsInstanceOfType(actionResult.Value, typeof(IEnumerable<Marque>));
+            Assert.AreEqual(2, ((IEnumerable<Marque>)actionResult.Value).Count());
         }
 
         [TestMethod]
@@ -53,8 +54,8 @@ namespace Tests
             // Arrange
             var marque = new Marque { Idmarque = 1, NomMarque = "Marque A" };
             _mockRepository
-                .Setup(repo => repo.GetById(1))
-                .Returns(new ActionResult<Marque>(marque));
+                .Setup(repo => repo.GetByIdAsync(1))
+                .ReturnsAsync(new ActionResult<Marque>(marque));
 
             // Act
             var actionResult = await _marquesController.GetMarqueById(1);
@@ -69,8 +70,8 @@ namespace Tests
         {
             // Arrange
             _mockRepository
-                .Setup(repo => repo.GetById(It.IsAny<int>()))
-                .Returns(new ActionResult<Marque>((Marque)null));
+                .Setup(repo => repo.GetByIdAsync(It.IsAny<int>()))
+                .ReturnsAsync((Marque)null); // Return null directly
 
             // Act
             var actionResult = await _marquesController.GetMarqueById(999);
@@ -95,7 +96,7 @@ namespace Tests
             };
 
             _mockRepository
-                .Setup(repo => repo.Post(It.IsAny<Marque>()))
+                .Setup(repo => repo.PostAsync(It.IsAny<Marque>()))
                 .Verifiable();
 
             // Act
@@ -116,11 +117,11 @@ namespace Tests
             var updatedMarque = new Marque { Idmarque = 1, NomMarque = "Marque B" };
 
             _mockRepository
-                .Setup(repo => repo.GetById(1))
-                .Returns(new ActionResult<Marque>(existingMarque));
+                .Setup(repo => repo.GetByIdAsync(1))
+                .ReturnsAsync(new ActionResult<Marque>(existingMarque));
 
             _mockRepository
-                .Setup(repo => repo.Put(existingMarque, updatedMarque))
+                .Setup(repo => repo.PutAsync(existingMarque, updatedMarque))
                 .Verifiable();
 
             // Act
@@ -147,31 +148,29 @@ namespace Tests
         public async Task DeleteMarque_ExistingId_ReturnsNoContent()
         {
             // Arrange
-            var marque = new Marque { Idmarque = 1, NomMarque = "Marque A" };
-            _mockRepository
-                .Setup(repo => repo.GetById(1))
-                .Returns(new ActionResult<Marque>(marque));
+            var existingMarque = new Marque { Idmarque = 1, NomMarque = "Marque A" };
+            _mockRepository.Setup(repo => repo.GetByIdAsync(1)).ReturnsAsync(existingMarque);
 
             // Act
             var actionResult = await _marquesController.DeleteMarque(1);
 
             // Assert
-            Assert.IsInstanceOfType(actionResult, typeof(NoContentResult));
+            Assert.IsInstanceOfType(actionResult, typeof(NoContentResult)); // Check for No Content
         }
+
 
         [TestMethod]
         public async Task DeleteMarque_NonExistingId_ReturnsNotFound()
         {
             // Arrange
-            _mockRepository
-                .Setup(repo => repo.GetById(It.IsAny<int>()))
-                .Returns(new ActionResult<Marque>((Marque)null));
+            _mockRepository.Setup(repo => repo.GetByIdAsync(9999)).ReturnsAsync((Marque)null);
 
             // Act
-            var actionResult = await _marquesController.DeleteMarque(999);
+            var actionResult = await _marquesController.DeleteMarque(9999); // Await the method call
 
             // Assert
             Assert.IsInstanceOfType(actionResult, typeof(NotFoundResult));
         }
+
     }
 }

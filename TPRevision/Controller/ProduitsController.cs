@@ -1,12 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using tprevision.Models.DataManager;
-using tprevision.Models.Manager.tprevision.Models.DataManager;
-using tprevision.Models.ModelTemplate;
-using tprevision.Models.Repository;
 using TPRevision.Models.EntityFramework;
+using tprevision.Models.DataManager;
+using tprevision.Models.ModelTemplate;
 
 namespace tprevision.Controller
 {
@@ -14,54 +11,40 @@ namespace tprevision.Controller
     [ApiController]
     public class ProduitsController : ControllerBase
     {
-        private readonly ProduitManager _produitRepository;
+        private readonly ProduitManager produitManager;
 
-        [ActivatorUtilitiesConstructor]
-        public ProduitsController(ProduitManager produitRepository)
+        public ProduitsController(ProduitManager manager)
         {
-            _produitRepository = produitRepository;
+            produitManager = manager;
         }
 
-        public ProduitsController() { }
-
-        // GET: api/Produits
         [HttpGet]
-        public ActionResult<IEnumerable<Produit>> GetProduits()
+        public async Task<ActionResult<IEnumerable<Produit>>> GetProduits()
         {
-            return _produitRepository.GetAll();
+            return await produitManager.GetAllAsync();
         }
 
-        // GET: api/Produits/5
         [HttpGet("{id}")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public ActionResult<Produit> GetProduit(int id)
+        public async Task<ActionResult<Produit>> GetProduitById(int id)
         {
-            var produit = _produitRepository.GetById(id);
-            if (produit == null)
+            var produit = await produitManager.GetByIdAsync(id);
+            if (produit.Value == null)
             {
                 return NotFound();
             }
             return produit;
         }
 
-        // PUT: api/Produits/5
-        [HttpPut("{id}")]
-        public IActionResult PutProduit(int id, Produit produit)
+        // Ajout de GetProduitByString pour chercher un produit par nom
+        [HttpGet("search/{nom}")]
+        public async Task<ActionResult<Produit>> GetProduitByString(string nom)
         {
-            if (id != produit.IdProduit)
-            {
-                return BadRequest();
-            }
-
-            var produitToUpdate = _produitRepository.GetById(id);
-            if (produitToUpdate == null)
+            var produit = await produitManager.GetByStringAsync(nom);
+            if (produit.Value == null)
             {
                 return NotFound();
             }
-
-            _produitRepository.Put(produitToUpdate.Value, produit);
-            return NoContent();
+            return produit;
         }
 
         // POST: api/Produits
@@ -81,21 +64,37 @@ namespace tprevision.Controller
                 IdMarque = produit.IdMarque
             };
 
-            _produitRepository.Post(nouveauProduit);
+            await produitManager.PostAsync(nouveauProduit);
             return CreatedAtAction("GetProduit", new { id = nouveauProduit.IdProduit }, nouveauProduit);
         }
 
-        // DELETE: api/Produits/5
-        [HttpDelete("{id}")]
-        public IActionResult DeleteProduit(int id)
+        [HttpPut("{id}")]
+        public async Task<IActionResult> PutProduit(int id, Produit produit)
         {
-            var produit = _produitRepository.GetById(id);
-            if (produit == null)
+            if (id != produit.IdProduit)
+            {
+                return BadRequest();
+            }
+
+            var produitToUpdate = await produitManager.GetByIdAsync(id);
+            if (produitToUpdate.Value == null)
             {
                 return NotFound();
             }
 
-            _produitRepository.Delete(produit.Value);
+            await produitManager.PutAsync(produitToUpdate.Value, produit);
+            return NoContent();
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteProduit(int id)
+        {
+            var produit = await produitManager.GetByIdAsync(id);
+            if (produit.Value == null)
+            {
+                return NotFound();
+            }
+            await produitManager.DeleteAsync(produit.Value);
             return NoContent();
         }
     }

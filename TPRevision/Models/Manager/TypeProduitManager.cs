@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using TPRevision.Models.EntityFramework;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using tprevision.Models.Repository;
 
 namespace tprevision.Models.DataManager
@@ -16,44 +17,41 @@ namespace tprevision.Models.DataManager
             _context = context;
         }
 
-        public TypeProduitManager() { }
-
-        public virtual ActionResult<IEnumerable<TypeProduit>> GetAll()
+        public async Task<ActionResult<IEnumerable<TypeProduit>>> GetAllAsync()
         {
-            return _context.Types.ToList();
+            var types = await _context.Types.ToListAsync();
+            return new ActionResult<IEnumerable<TypeProduit>>(types);
         }
 
-        public virtual ActionResult<TypeProduit> GetById(int id)
+        public async Task<ActionResult<TypeProduit>> GetByIdAsync(int id)
         {
-            var typeProduit = _context.Types.FirstOrDefault(tp => tp.Idtypeproduit == id);
-
-            return typeProduit;
+            var typeProduit = await _context.Types.FirstOrDefaultAsync(tp => tp.Idtypeproduit == id);
+            return typeProduit != null ? new ActionResult<TypeProduit>(typeProduit) : new NotFoundResult();
         }
 
-        public virtual void Post(TypeProduit entity)
+        public async Task PostAsync(TypeProduit entity)
         {
-            _context.Types.Add(entity);
-            _context.SaveChanges();
+            await _context.Types.AddAsync(entity);
+            await _context.SaveChangesAsync();
         }
 
-        public virtual void Put(TypeProduit typeProduitToUpdate, TypeProduit entity)
+        public async Task PutAsync(TypeProduit typeProduitToUpdate, TypeProduit entity)
         {
             _context.Entry(typeProduitToUpdate).State = EntityState.Modified;
             typeProduitToUpdate.nomtypeproduit = entity.nomtypeproduit;
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
         }
 
-        public virtual void Delete(TypeProduit entity)
+        public async Task DeleteAsync(TypeProduit entity)
         {
             _context.Types.Remove(entity);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
         }
 
-        public virtual ActionResult<TypeProduit> GetByString(string str)
+        public async Task<ActionResult<TypeProduit>> GetByStringAsync(string str)
         {
-            var typeProduit = _context.Types.FirstOrDefault(tp => tp.nomtypeproduit == str);
-
-            return typeProduit;
+            var typeProduit = await _context.Types.FirstOrDefaultAsync(tp => tp.nomtypeproduit == str);
+            return typeProduit != null ? new ActionResult<TypeProduit>(typeProduit) : new NotFoundResult();
         }
     }
 }

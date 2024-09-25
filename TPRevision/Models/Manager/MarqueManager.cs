@@ -15,43 +15,47 @@ namespace tprevision.Models.DataManager
         public MarqueManager(ProduitDbContext context)
         {
             _context = context;
-        }
+        } 
+        //eee
 
         public MarqueManager() { }
 
 
-        public virtual ActionResult<IEnumerable<Marque>> GetAll()
+        public async virtual Task<ActionResult<IEnumerable<Marque>>> GetAllAsync()
         {
-            return _context.Marques.ToList();
+            var lesMarques = await _context.Marques.ToListAsync();
+            return lesMarques;
         }
 
-        public virtual ActionResult<Marque> GetById(int id)
+        public async virtual Task<ActionResult<Marque>> GetByIdAsync(int id)
         {
-            return _context.Marques.FirstOrDefault(m => m.Idmarque == id);
+            var laMarque = await _context.Marques.FirstOrDefaultAsync(m => m.Idmarque == id);
+            return laMarque;
         }
 
-        public virtual ActionResult<Marque> GetByString(string nom)
+        public async virtual Task<ActionResult<Marque>> GetByStringAsync(string nom)
         {
-            return _context.Marques.FirstOrDefault(m => m.NomMarque.ToUpper() == nom.ToUpper());
+            var laMarque = await _context.Marques.FirstOrDefaultAsync(m => m.NomMarque.ToUpper() == nom.ToUpper());
+            return laMarque;
         }
 
-        public virtual void Post(Marque entity)
+        public async virtual Task PostAsync(Marque entity)
         {
-            _context.Marques.Add(entity);
-            _context.SaveChanges();
+            await _context.Marques.AddAsync(entity);
+            await _context.SaveChangesAsync();
         }
 
-        public virtual void Put(Marque marqueToUpdate, Marque entity)
+        public async virtual Task PutAsync(Marque marqueToUpdate, Marque entity)
         {
             _context.Entry(marqueToUpdate).State = EntityState.Modified;
             marqueToUpdate.NomMarque = entity.NomMarque;
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
         }
 
-        public virtual void Delete(Marque entity)
+        public async virtual Task DeleteAsync(Marque entity)
         {
             _context.Marques.Remove(entity);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
         }
     }
 }

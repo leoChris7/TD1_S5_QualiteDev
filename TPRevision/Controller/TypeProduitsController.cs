@@ -15,29 +15,26 @@ namespace tprevision.Controller
     {
         private readonly TypeProduitManager _typeProduitRepository;
 
-        [ActivatorUtilitiesConstructor]
         public TypeProduitsController(TypeProduitManager typeProduitRepository)
         {
             _typeProduitRepository = typeProduitRepository;
         }
 
-        public TypeProduitsController() { }
-
         // GET: api/TypeProduits
         [HttpGet]
-        public ActionResult<IEnumerable<TypeProduit>> GetTypes()
+        public async Task<ActionResult<IEnumerable<TypeProduit>>> GetTypes()
         {
-            return _typeProduitRepository.GetAll();
+            return await _typeProduitRepository.GetAllAsync();
         }
 
         // GET: api/TypeProduits/5
         [HttpGet("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public ActionResult<TypeProduit> GetTypeProduit(int id)
+        public async Task<ActionResult<TypeProduit>> GetTypeProduit(int id)
         {
-            var typeProduit = _typeProduitRepository.GetById(id);
-            if (typeProduit == null)
+            var typeProduit = await _typeProduitRepository.GetByIdAsync(id);
+            if (typeProduit.Result == null)
             {
                 return NotFound();
             }
@@ -46,20 +43,20 @@ namespace tprevision.Controller
 
         // PUT: api/TypeProduits/5
         [HttpPut("{id}")]
-        public IActionResult PutTypeProduit(int id, TypeProduit typeProduit)
+        public async Task<IActionResult> PutTypeProduit(int id, TypeProduit typeProduit)
         {
             if (id != typeProduit.Idtypeproduit)
             {
                 return BadRequest();
             }
 
-            var typeProduitToUpdate = _typeProduitRepository.GetById(id);
-            if (typeProduitToUpdate == null)
+            var typeProduitToUpdate = await _typeProduitRepository.GetByIdAsync(id);
+            if (typeProduitToUpdate.Result == null)
             {
                 return NotFound();
             }
 
-            _typeProduitRepository.Put(typeProduitToUpdate.Value, typeProduit);
+            await _typeProduitRepository.PutAsync(typeProduitToUpdate.Value, typeProduit);
             return NoContent();
         }
 
@@ -72,21 +69,21 @@ namespace tprevision.Controller
                 nomtypeproduit = typeProduit.nomtypeproduit
             };
 
-            _typeProduitRepository.Post(nouveauTypeProduit);
+            await _typeProduitRepository.PostAsync(nouveauTypeProduit);
             return CreatedAtAction("GetTypeProduit", new { id = nouveauTypeProduit.Idtypeproduit }, nouveauTypeProduit);
         }
 
         // DELETE: api/TypeProduits/5
         [HttpDelete("{id}")]
-        public IActionResult DeleteTypeProduit(int id)
+        public async Task<IActionResult> DeleteTypeProduit(int id)
         {
-            var typeProduit = _typeProduitRepository.GetById(id);
-            if (typeProduit == null)
+            var typeProduit = await _typeProduitRepository.GetByIdAsync(id);
+            if (typeProduit.Result == null)
             {
                 return NotFound();
             }
 
-            _typeProduitRepository.Delete(typeProduit.Value);
+            await _typeProduitRepository.DeleteAsync(typeProduit.Value);
             return NoContent();
         }
     }

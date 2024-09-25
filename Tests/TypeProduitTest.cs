@@ -34,14 +34,14 @@ namespace Tests
             };
 
             _mockRepository
-                .Setup(repo => repo.GetAll())
-                .Returns(types);
+                .Setup(repo => repo.GetAllAsync())
+                .ReturnsAsync(types);
 
             // Act
             var actionResult = _typeProduitsController.GetTypes();
 
             // Assert
-            var result = actionResult.Result as OkObjectResult;
+            var result = actionResult.Result.Value as OkObjectResult;
             Assert.IsNotNull(result);
             Assert.IsInstanceOfType(result.Value, typeof(IEnumerable<TypeProduit>));
             Assert.AreEqual(2, ((IEnumerable<TypeProduit>)result.Value).Count());
@@ -53,15 +53,15 @@ namespace Tests
             // Arrange
             var typeProduit = new TypeProduit { Idtypeproduit = 1, nomtypeproduit = "Type A" };
             _mockRepository
-                .Setup(repo => repo.GetById(1))
-                .Returns(new ActionResult<TypeProduit>(typeProduit));
+                .Setup(repo => repo.GetByIdAsync(1))
+                .ReturnsAsync(new ActionResult<TypeProduit>(typeProduit));
 
             // Act
             var actionResult = _typeProduitsController.GetTypeProduit(1);
 
             // Assert
-            Assert.IsNotNull(actionResult.Value);
-            Assert.AreEqual(typeProduit.nomtypeproduit, actionResult.Value.nomtypeproduit);
+            Assert.IsNotNull(actionResult.Result.Value);
+            Assert.AreEqual(typeProduit.nomtypeproduit, actionResult.Result.Value.nomtypeproduit);
         }
 
         [TestMethod]
@@ -69,8 +69,8 @@ namespace Tests
         {
             // Arrange
             _mockRepository
-                .Setup(repo => repo.GetById(It.IsAny<int>()))
-                .Returns(new ActionResult<TypeProduit>((TypeProduit)null));
+                .Setup(repo => repo.GetByIdAsync(It.IsAny<int>()))
+                .ReturnsAsync(new ActionResult<TypeProduit>((TypeProduit)null));
 
             // Act
             var actionResult = _typeProduitsController.GetTypeProduit(999);
@@ -95,7 +95,7 @@ namespace Tests
             };
 
             _mockRepository
-                .Setup(repo => repo.Post(It.IsAny<TypeProduit>()))
+                .Setup(repo => repo.PostAsync(It.IsAny<TypeProduit>()))
                 .Verifiable();
 
             // Act
@@ -116,11 +116,11 @@ namespace Tests
             var updatedTypeProduit = new TypeProduit { Idtypeproduit = 1, nomtypeproduit = "Type B" };
 
             _mockRepository
-                .Setup(repo => repo.GetById(1))
-                .Returns(new ActionResult<TypeProduit>(existingTypeProduit));
+                .Setup(repo => repo.GetByIdAsync(1))
+                .ReturnsAsync(new ActionResult<TypeProduit>(existingTypeProduit));
 
             _mockRepository
-                .Setup(repo => repo.Put(existingTypeProduit, updatedTypeProduit))
+                .Setup(repo => repo.PutAsync(existingTypeProduit, updatedTypeProduit))
                 .Verifiable();
 
             // Act
@@ -149,8 +149,8 @@ namespace Tests
             // Arrange
             var typeProduit = new TypeProduit { Idtypeproduit = 1, nomtypeproduit = "Type A" };
             _mockRepository
-                .Setup(repo => repo.GetById(1))
-                .Returns(new ActionResult<TypeProduit>(typeProduit));
+                .Setup(repo => repo.GetByIdAsync(1))
+                .ReturnsAsync(new ActionResult<TypeProduit>(typeProduit));
 
             // Act
             var actionResult = _typeProduitsController.DeleteTypeProduit(1);
@@ -164,8 +164,8 @@ namespace Tests
         {
             // Arrange
             _mockRepository
-                .Setup(repo => repo.GetById(It.IsAny<int>()))
-                .Returns(new ActionResult<TypeProduit>((TypeProduit)null));
+                .Setup(repo => repo.GetByIdAsync(It.IsAny<int>()))
+                .ReturnsAsync(new ActionResult<TypeProduit>((TypeProduit)null));
 
             // Act
             var actionResult = _typeProduitsController.DeleteTypeProduit(999);

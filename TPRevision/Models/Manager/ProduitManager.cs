@@ -1,65 +1,57 @@
-﻿namespace tprevision.Models.Manager
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Mvc;
+using TPRevision.Models.EntityFramework;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using tprevision.Models.Repository;
+
+namespace tprevision.Models.DataManager
 {
-    using Microsoft.AspNetCore.Mvc;
-    using Microsoft.EntityFrameworkCore;
-    using TPRevision.Models.EntityFramework;
-    using System.Collections.Generic;
-    using System.Linq;
-    using global::tprevision.Models.Repository;
-    using Microsoft.AspNetCore.Http.HttpResults;
-
-    namespace tprevision.Models.DataManager
+    public class ProduitManager : IDataRepository<Produit>
     {
-        public class ProduitManager : IDataRepository<Produit>
+        private readonly ProduitDbContext _context;
+
+        public ProduitManager(ProduitDbContext context)
         {
-            private readonly ProduitDbContext _context;
+            _context = context;
+        }
 
-            public ProduitManager(ProduitDbContext context)
-            {
-                _context = context;
-            }
+        public async Task<ActionResult<IEnumerable<Produit>>> GetAllAsync()
+        {
+            return await _context.Produits.ToListAsync();
+        }
 
-            public ProduitManager() { }
+        public async Task<ActionResult<Produit>> GetByIdAsync(int id)
+        {
+            var produit = await _context.Produits.FirstOrDefaultAsync(p => p.IdProduit == id);
+            return produit;
+        }
 
-            public virtual ActionResult<IEnumerable<Produit>> GetAll()
-            {
-                return _context.Produits.ToList();
-            }
+        // Ajout de GetByStringAsync pour chercher un produit par son nom
+        public async Task<ActionResult<Produit>> GetByStringAsync(string nom)
+        {
+            var produit = await _context.Produits.FirstOrDefaultAsync(p => p.NomProduit.ToUpper() == nom.ToUpper());
+            return produit;
+        }
 
-            public virtual ActionResult<Produit> GetById(int id)
-            {
-                var produit = _context.Produits.FirstOrDefault(p => p.IdProduit == id);
+        public async Task PostAsync(Produit entity)
+        {
+            await _context.Produits.AddAsync(entity);
+            await _context.SaveChangesAsync();
+        }
 
-                return produit;
-            }
+        public async Task PutAsync(Produit produitToUpdate, Produit entity)
+        {
+            _context.Entry(produitToUpdate).State = EntityState.Modified;
+            produitToUpdate.NomProduit = entity.NomProduit;
+            await _context.SaveChangesAsync();
+        }
 
-            public virtual void Post(Produit entity)
-            {
-                _context.Produits.Add(entity);
-                _context.SaveChanges();
-            }
-
-            public virtual void Put(Produit produitToUpdate, Produit entity)
-            {
-                _context.Entry(produitToUpdate).State = EntityState.Modified;
-                produitToUpdate.NomProduit = entity.NomProduit;
-                // Ajoutez d'autres propriétés à mettre à jour si nécessaire
-                _context.SaveChanges();
-            }
-
-            public virtual void Delete(Produit entity)
-            {
-                _context.Produits.Remove(entity);
-                _context.SaveChanges();
-            }
-
-            public virtual ActionResult<Produit> GetByString(string str)
-            {
-                var produit = _context.Produits.FirstOrDefault(tp => tp.NomProduit == str);
-
-                return produit;
-            }
+        public async Task DeleteAsync(Produit entity)
+        {
+            _context.Produits.Remove(entity);
+            await _context.SaveChangesAsync();
         }
     }
-
 }
