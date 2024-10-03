@@ -1,13 +1,11 @@
-﻿
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
+﻿using Microsoft.EntityFrameworkCore;
 
-namespace TPRevision.Models.EntityFramework
+namespace GestionProduit_API.Models.EntityFramework
 {
     public partial class ProduitDbContext : DbContext
     {
         public ProduitDbContext() { }
-        public ProduitDbContext(DbContextOptions<ProduitDbContext>options): base(options) { }
+        public ProduitDbContext(DbContextOptions<ProduitDbContext> options) : base(options) { }
 
         public virtual DbSet<Produit> Produits { get; set; } = null!;
         public virtual DbSet<TypeProduit> Types { get; set; } = null!;
@@ -28,6 +26,10 @@ namespace TPRevision.Models.EntityFramework
                 entity.HasKey(e => e.IdProduit)
                     .HasName("pk_pdt");
 
+                // Auto Incrémentation
+                entity.Property(e => e.IdProduit)
+                    .UseIdentityColumn();
+ 
                 entity.HasOne(d => d.IdMarqueNavigation)
                     .WithMany(p => p.Produits)
                     .HasForeignKey(d => d.IdMarque)
@@ -45,12 +47,20 @@ namespace TPRevision.Models.EntityFramework
             {
                 entity.HasKey(e => e.Idtypeproduit)
                     .HasName("pk_typepdt");
+
+                // Auto Incrémentation
+                entity.Property(e => e.Idtypeproduit)
+                    .UseIdentityColumn();
             });
 
             modelBuilder.Entity<Marque>(entity =>
             {
                 entity.HasKey(e => e.Idmarque)
                     .HasName("pk_mrq");
+
+                // Auto Incrémentation
+                entity.Property(e => e.Idmarque)
+                    .UseIdentityColumn();
             });
 
             OnModelCreatingPartial(modelBuilder);

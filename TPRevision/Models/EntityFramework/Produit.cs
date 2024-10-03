@@ -1,9 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Newtonsoft.Json;
 
-namespace TPRevision.Models.EntityFramework
+namespace GestionProduit_API.Models.EntityFramework
 {
     [PrimaryKey("IdProduit")]
     [Table("produit")]
@@ -38,12 +37,12 @@ namespace TPRevision.Models.EntityFramework
 
         [ForeignKey("Idtypeproduit")]
         [InverseProperty(nameof(TypeProduit.Produits))]
-        public  int IdTypeProduit { get; set; }
+        public int? IdTypeProduit { get; set; }
 
         [ForeignKey("Idmarque")]
         [InverseProperty(nameof(Marque.Produits))]
-        public  int IdMarque { get; set; }
-        
+        public int? IdMarque { get; set; }
+
         [ForeignKey(nameof(IdTypeProduit))]
         [InverseProperty(nameof(TypeProduit.Produits))]
         public virtual TypeProduit IdTypeProduitNavigation { get; set; } = null!;

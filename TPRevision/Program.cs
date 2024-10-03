@@ -1,31 +1,49 @@
 using Microsoft.EntityFrameworkCore;
-using tprevision.Models.DataManager;
-using tprevision.Models.DataManager;
-using tprevision.Models.Repository;
-using TPRevision.Models.EntityFramework;
+using GestionProduit_API.Models.Manager;
+using GestionProduit_API.Models.EntityFramework;
+
+var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Add CORS services
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowSpecificOrigin", builder =>
+    {
+        builder.WithOrigins("http://localhost:5012") // Allow this origin
+               .AllowAnyMethod()                     // Allow any HTTP methods
+               .AllowAnyHeader();                    // Allow any headers
+    });
+});
 
-// Add services to the container.
+
+// Récupérer la chaîne de connexion depuis le fichier de configuration
+var connectionString = builder.Configuration.GetConnectionString("ProduitDbConnection");
+
+// Ajouter les services à l'injection de dépendance
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-builder.Services.AddDbContext<ProduitDbContext>(options => options.UseNpgsql("Server=localhost;port=5432;Database=FilmDB;uid=postgres;password=postgres;"));
+builder.Services.AddDbContext<ProduitDbContext>(options =>
+    options.UseNpgsql(connectionString));
+
 builder.Services.AddControllers();
 
+// Ajouter les services Scoped pour les managers
 builder.Services.AddScoped<MarqueManager>();
 builder.Services.AddScoped<TypeProduitManager>();
 builder.Services.AddScoped<ProduitManager>();
 
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+// Configurer Swagger pour la documentation de l'API
 builder.Services.AddEndpointsApiExplorer();
-
 builder.Services.AddSwaggerGen();
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+app.UseCors(MyAllowSpecificOrigins);
+
+// Configurer le pipeline HTTP
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();

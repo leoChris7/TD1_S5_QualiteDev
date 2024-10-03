@@ -1,11 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using TPRevision.Models.EntityFramework;
-using tprevision.Models.DataManager;
-using tprevision.Models.ModelTemplate;
+using GestionProduit_API.Models.ModelTemplate;
+using GestionProduit_API.Models.Manager;
+using GestionProduit_API.Models.EntityFramework;
 
-namespace tprevision.Controller
+namespace GestionProduit_API.Controller
 {
     [Route("api/[controller]")]
     [ApiController]

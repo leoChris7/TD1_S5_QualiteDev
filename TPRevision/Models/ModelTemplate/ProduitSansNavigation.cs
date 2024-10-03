@@ -1,4 +1,4 @@
-﻿namespace tprevision.Models.ModelTemplate
+﻿namespace GestionProduit_API.Models.ModelTemplate
 {
     public class ProduitSansNavigation
     {
@@ -7,8 +7,8 @@
         private string? description;
         private string? nomPhoto;
         private string? uriPhoto;
-        private int idTypeProduit;
-        private int idMarque;
+        private int? idTypeProduit;
+        private int? idMarque;
         private int stockReel;
         private int stockMin;
         private int stockMax;
@@ -78,7 +78,7 @@
             }
         }
 
-        public int IdTypeProduit
+        public int? IdTypeProduit
         {
             get
             {
@@ -91,7 +91,7 @@
             }
         }
 
-        public int IdMarque
+        public int? IdMarque
         {
             get
             {

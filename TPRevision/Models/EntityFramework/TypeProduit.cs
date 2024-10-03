@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-namespace TPRevision.Models.EntityFramework
+namespace GestionProduit_API.Models.EntityFramework
 {
     [PrimaryKey("Idtypeproduit")]
     [Table("typeproduit")]
@@ -9,10 +9,10 @@ namespace TPRevision.Models.EntityFramework
     {
         [Key]
         [Column("idtypeproduit")]
-        public int Idtypeproduit {  get; set; }
+        public int Idtypeproduit { get; set; }
 
         [Column("nomtypeproduit")]
-        public string? nomtypeproduit { get; set; }
+        public string? Nomtypeproduit { get; set; }
 
         [InverseProperty(nameof(Produit.IdTypeProduitNavigation))]
         public virtual ICollection<Produit> Produits { get; set; } = new List<Produit>();

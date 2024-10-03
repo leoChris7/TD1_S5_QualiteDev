@@ -1,13 +1,9 @@
-﻿using Microsoft.AspNetCore.Http.HttpResults;
+﻿using GestionProduit_API.Controller;
+using GestionProduit_API.Models.EntityFramework;
+using GestionProduit_API.Models.Manager;
+using GestionProduit_API.Models.ModelTemplate;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using tprevision.Controller;
-using tprevision.Models.DataManager;
-using tprevision.Models.ModelTemplate;
-using TPRevision.Models.EntityFramework;
 
 namespace Tests
 {

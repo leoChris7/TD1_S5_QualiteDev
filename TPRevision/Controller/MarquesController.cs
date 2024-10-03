@@ -1,21 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using tprevision.Models.DataManager;
-using tprevision.Models.ModelTemplate;
-using TPRevision.Models.EntityFramework;
+﻿using Microsoft.AspNetCore.Mvc;
+using GestionProduit_API.Models.ModelTemplate;
+using GestionProduit_API.Models.Manager;
+using GestionProduit_API.Models.EntityFramework;
 
-namespace tprevision.Controller
+namespace GestionProduit_API.Controller
 {
     [Route("api/[controller]")]
     [ApiController]
     public class MarquesController : ControllerBase
     {
-        private readonly MarqueManager marqueManager;
+        private readonly MarqueManager? marqueManager;
 
         [ActivatorUtilitiesConstructor]
         public MarquesController(MarqueManager _manager)

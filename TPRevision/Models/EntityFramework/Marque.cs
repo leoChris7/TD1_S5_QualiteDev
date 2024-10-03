@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace TPRevision.Models.EntityFramework
+namespace GestionProduit_API.Models.EntityFramework
 {
     [PrimaryKey("Idmarque")]
     [Table("marque")]

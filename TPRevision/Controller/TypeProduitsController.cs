@@ -1,13 +1,9 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using tprevision.Models.DataManager;
-using tprevision.Models.ModelTemplate;
-using tprevision.Models.Repository;
-using TPRevision.Models.EntityFramework;
+﻿using Microsoft.AspNetCore.Mvc;
+using GestionProduit_API.Models.ModelTemplate;
+using GestionProduit_API.Models.Manager;
+using GestionProduit_API.Models.EntityFramework;
 
-namespace tprevision.Controller
+namespace GestionProduit_API.Controller
 {
     [Route("api/[controller]")]
     [ApiController]
@@ -72,7 +68,7 @@ namespace tprevision.Controller
         {
             var nouveauTypeProduit = new TypeProduit
             {
-                nomtypeproduit = typeProduit.nomtypeproduit
+                Nomtypeproduit = typeProduit.nomtypeproduit
             };
 
             await _typeProduitRepository.PostAsync(nouveauTypeProduit);

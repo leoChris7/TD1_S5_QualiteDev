@@ -1,12 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc;
-using TPRevision.Models.EntityFramework;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using tprevision.Models.Repository;
+using GestionProduit_API.Models.Repository;
+using GestionProduit_API.Models.EntityFramework;
 
-namespace tprevision.Models.DataManager
+namespace GestionProduit_API.Models.Manager
 {
     public class ProduitManager : IDataRepository<Produit>
     {

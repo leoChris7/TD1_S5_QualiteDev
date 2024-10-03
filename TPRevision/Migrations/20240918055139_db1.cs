@@ -2,7 +2,7 @@
 
 #nullable disable
 
-namespace tprevision.Migrations
+namespace GestionProduit_API.Migrations
 {
     /// <inheritdoc />
     public partial class db1 : Migration

@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-
-namespace tprevision.Models.ModelTemplate
+﻿namespace GestionProduit_API.Models.ModelTemplate
 {
     public class MarqueSansNavigation
     {

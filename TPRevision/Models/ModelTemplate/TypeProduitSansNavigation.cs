@@ -1,8 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-using System.ComponentModel.DataAnnotations;
-using TPRevision.Models.EntityFramework;
-
-namespace tprevision.Models.ModelTemplate
+﻿namespace GestionProduit_API.Models.ModelTemplate
 {
     public class TypeProduitSansNavigation
     {

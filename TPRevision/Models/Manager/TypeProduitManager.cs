@@ -1,12 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using TPRevision.Models.EntityFramework;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using tprevision.Models.Repository;
+using GestionProduit_API.Models.Repository;
+using GestionProduit_API.Models.EntityFramework;
 
-namespace tprevision.Models.DataManager
+namespace GestionProduit_API.Models.Manager
 {
     public class TypeProduitManager : IDataRepository<TypeProduit>
     {
@@ -43,7 +40,7 @@ namespace tprevision.Models.DataManager
         public async virtual Task PutAsync(TypeProduit typeProduitToUpdate, TypeProduit entity)
         {
             _context.Entry(typeProduitToUpdate).State = EntityState.Modified;
-            typeProduitToUpdate.nomtypeproduit = entity.nomtypeproduit;
+            typeProduitToUpdate.Nomtypeproduit = entity.Nomtypeproduit;
             await _context.SaveChangesAsync();
         }
 
@@ -55,7 +52,7 @@ namespace tprevision.Models.DataManager
 
         public async virtual Task<ActionResult<TypeProduit>> GetByStringAsync(string str)
         {
-            var typeProduit = await _context.Types.FirstOrDefaultAsync(tp => tp.nomtypeproduit == str);
+            var typeProduit = await _context.Types.FirstOrDefaultAsync(tp => tp.Nomtypeproduit == str);
             return typeProduit != null ? new ActionResult<TypeProduit>(typeProduit) : new NotFoundResult();
         }
     }

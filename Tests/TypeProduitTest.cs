@@ -1,12 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using GestionProduit_API.Controller;
+using GestionProduit_API.Models.EntityFramework;
+using GestionProduit_API.Models.Manager;
+using GestionProduit_API.Models.ModelTemplate;
+using Microsoft.AspNetCore.Mvc;
 using Moq;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using tprevision.Controller;
-using tprevision.Models.DataManager;
-using tprevision.Models.ModelTemplate;
-using TPRevision.Models.EntityFramework;
 
 namespace Tests
 {
@@ -29,8 +26,8 @@ namespace Tests
             // Arrange
             var types = new List<TypeProduit>
             {
-                new TypeProduit { Idtypeproduit = 1, nomtypeproduit = "Type A" },
-                new TypeProduit { Idtypeproduit = 2, nomtypeproduit = "Type B" }
+                new TypeProduit { Idtypeproduit = 1, Nomtypeproduit = "Type A" },
+                new TypeProduit { Idtypeproduit = 2, Nomtypeproduit = "Type B" }
             };
 
             _mockRepository.Setup(repo => repo.GetAllAsync()).ReturnsAsync(types);
@@ -47,7 +44,7 @@ namespace Tests
         public async Task GetTypeProduit_ExistingId_ReturnsTypeProduit()
         {
             // Arrange
-            var typeProduit = new TypeProduit { Idtypeproduit = 1, nomtypeproduit = "Type A" };
+            var typeProduit = new TypeProduit { Idtypeproduit = 1, Nomtypeproduit = "Type A" };
             _mockRepository
                 .Setup(repo => repo.GetByIdAsync(1))
                 .ReturnsAsync(new ActionResult<TypeProduit>(typeProduit));
@@ -57,7 +54,7 @@ namespace Tests
 
             // Assert
             Assert.IsNotNull(actionResult.Value);
-            Assert.AreEqual(typeProduit.nomtypeproduit, actionResult.Value.nomtypeproduit);
+            Assert.AreEqual(typeProduit.Nomtypeproduit, actionResult.Value.Nomtypeproduit);
         }
 
 
@@ -89,7 +86,7 @@ namespace Tests
             var typeProduit = new TypeProduit
             {
                 Idtypeproduit = 1,
-                nomtypeproduit = "Type Nouveau"
+                Nomtypeproduit = "Type Nouveau"
             };
 
             _mockRepository
@@ -103,15 +100,15 @@ namespace Tests
             var result = actionResult.Result as CreatedAtActionResult;
             Assert.IsNotNull(result);
             Assert.IsInstanceOfType(result.Value, typeof(TypeProduit));
-            Assert.AreEqual(typeProduit.nomtypeproduit, ((TypeProduit)result.Value).nomtypeproduit);
+            Assert.AreEqual(typeProduit.Nomtypeproduit, ((TypeProduit)result.Value).Nomtypeproduit);
         }
 
         [TestMethod]
         public async Task PutTypeProduit_ValidId_UpdatesTypeProduit()
         {
             // Arrange
-            var existingTypeProduit = new TypeProduit { Idtypeproduit = 1, nomtypeproduit = "Type A" };
-            var updatedTypeProduit = new TypeProduit { Idtypeproduit = 1, nomtypeproduit = "Type B" };
+            var existingTypeProduit = new TypeProduit { Idtypeproduit = 1, Nomtypeproduit = "Type A" };
+            var updatedTypeProduit = new TypeProduit { Idtypeproduit = 1, Nomtypeproduit = "Type B" };
 
             _mockRepository
                 .Setup(repo => repo.GetByIdAsync(1))
@@ -132,7 +129,7 @@ namespace Tests
         public async Task PutTypeProduit_InvalidId_ReturnsBadRequest()
         {
             // Arrange
-            var typeProduit = new TypeProduit { Idtypeproduit = 1, nomtypeproduit = "Type A" };
+            var typeProduit = new TypeProduit { Idtypeproduit = 1, Nomtypeproduit = "Type A" };
 
             // Act
             var actionResult = await _typeProduitsController.PutTypeProduit(2, typeProduit);
@@ -145,7 +142,7 @@ namespace Tests
         public async Task DeleteTypeProduit_ExistingId_ReturnsNoContentAsync()
         {
             // Arrange
-            var typeProduit = new TypeProduit { Idtypeproduit = 1, nomtypeproduit = "Type A" };
+            var typeProduit = new TypeProduit { Idtypeproduit = 1, Nomtypeproduit = "Type A" };
             _mockRepository
                 .Setup(repo => repo.GetByIdAsync(1))
                 .ReturnsAsync(new ActionResult<TypeProduit>(typeProduit));

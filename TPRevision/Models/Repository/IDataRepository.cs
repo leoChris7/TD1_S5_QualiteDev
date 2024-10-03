@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 
-namespace tprevision.Models.Repository
+namespace GestionProduit_API.Models.Repository
 {
     public interface IDataRepository<TEntity>
     {
