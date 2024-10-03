@@ -1,0 +1,126 @@
+﻿@page "/produits"
+@using GestionProduit_Client.Models
+@using GestionProduit_Client.Services.Interfaces
+@using GestionProduit_Client.Services
+@inject NavigationManager Navigation
+
+<h3>Liste des Produits</h3>
+
+@if (lesProduits == null)
+{
+    <p>Chargement des produits...</p>
+}
+else if (lesProduits.Count == 0)
+{
+    <p>Aucun produit trouvé.</p>
+}
+else
+{
+    <table>
+        <thead>
+            <tr>
+                <th>Nom Produit</th>
+                <th>Description</th>
+                <th>Marque</th>
+                <th>Type de produit</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        @foreach (var produit in lesProduits)
+        {
+            <tr>
+                <td>@produit.NomProduit</td>
+                <td>@produit.Description</td>
+                <td>@produit.IdMarque</td>
+                <td>@produit.IdTypeProduit</td>
+                <td>
+                    <button @onclick="() => EditProduit(produit)">Modifier</button>
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+}
+
+<h3>@(IsEditMode ? "Modifier le Produit" : "Créer un Nouveau Produit")</h3>
+
+<EditForm Model="@produitModel" OnValidSubmit="HandleValidSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div>
+        <label>Nom du Produit:</label>
+        <InputText id="nomProduit" @bind-Value="produitModel.NomProduit" />
+    </div>
+    <div>
+        <label>Description:</label>
+        <InputText id="description" @bind-Value="produitModel.Description" />
+    </div>
+    <div>
+        <label>Marque (Id):</label>
+        <InputNumber id="idMarque" @bind-Value="produitModel.IdMarque" />
+    </div>
+    <div>
+        <label>Type de Produit (Id):</label>
+        <InputNumber id="idTypeProduit" @bind-Value="produitModel.IdTypeProduit" />
+    </div>
+
+    <button type="submit">@((IsEditMode) ? "Modifier" : "Créer")</button>
+    <button type="button" @onclick="ResetForm">Annuler</button>
+</EditForm>
+
+@code {
+    private List<Produit> lesProduits;
+    private Produit produitModel = new Produit();
+    private bool IsEditMode = false;
+
+    [Inject]
+    private IService WSService { get; set; }  // Injection du service
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Fetch list of products when the page is initialized
+        lesProduits = await WSService.GetProduitsAsync("produits");
+    }
+
+    // Handle form submission for both creation and modification
+    private async Task HandleValidSubmit()
+    {
+        if (IsEditMode)
+        {
+            // Update the product
+            await WSService.PutProduitAsync($"produits/{produitModel.IdProduit}", produitModel);
+        }
+        else
+        {
+            // Create a new product
+            await WSService.PostProduitAsync("produits", produitModel);
+        }
+
+        // Refresh the product list
+        lesProduits = await WSService.GetProduitsAsync("produits");
+        ResetForm();
+    }
+
+    // Edit the selected product
+    private void EditProduit(Produit produit)
+    {
+        produitModel = new Produit
+        {
+            IdProduit = produit.IdProduit,
+            NomProduit = produit.NomProduit,
+            Description = produit.Description,
+            IdMarque = produit.IdMarque,
+            IdTypeProduit = produit.IdTypeProduit
+        };
+        IsEditMode = true;
+    }
+
+    // Reset the form after submit or cancel
+    private void ResetForm()
+    {
+        produitModel = new Produit();
+        IsEditMode = false;
+    }
+}

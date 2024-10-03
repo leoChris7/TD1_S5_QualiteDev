@@ -86,7 +86,13 @@ namespace GestionProduit_API.Controller
                 return NotFound();
             }
 
-            await produitManager.PutAsync(produitToUpdate.Value, produit);
+            ProduitSansNavigation psN = new ProduitSansNavigation
+            {
+                NomProduit = produit.NomProduit,
+                StockMax = produit.StockMax
+            };
+
+            await produitManager.PutAsync(produitToUpdate.Value.IdProduit, psN);
             return NoContent();
         }
 

@@ -2,16 +2,16 @@ using Microsoft.EntityFrameworkCore;
 using GestionProduit_API.Models.Manager;
 using GestionProduit_API.Models.EntityFramework;
 
-var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
+var MyAllowSpecificOrigins = "AllowSpecificOrigins";
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add CORS services
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowSpecificOrigin", builder =>
+    options.AddPolicy(MyAllowSpecificOrigins, builder =>
     {
-        builder.WithOrigins("http://localhost:5012") // Allow this origin
+        builder.WithOrigins("http://localhost:5012", "https://localhost:7245") // Allow this origin
                .AllowAnyMethod()                     // Allow any HTTP methods
                .AllowAnyHeader();                    // Allow any headers
     });
