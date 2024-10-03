@@ -16,7 +16,6 @@ namespace tprevision.Models.DataManager
         {
             _context = context;
         } 
-        //eee
 
         public MarqueManager() { }
 

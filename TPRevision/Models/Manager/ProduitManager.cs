@@ -17,38 +17,43 @@ namespace tprevision.Models.DataManager
             _context = context;
         }
 
-        public async Task<ActionResult<IEnumerable<Produit>>> GetAllAsync()
+        public ProduitManager()
+        {
+
+        }
+
+        public async virtual Task<ActionResult<IEnumerable<Produit>>> GetAllAsync()
         {
             return await _context.Produits.ToListAsync();
         }
 
-        public async Task<ActionResult<Produit>> GetByIdAsync(int id)
+        public async virtual Task<ActionResult<Produit>> GetByIdAsync(int id)
         {
             var produit = await _context.Produits.FirstOrDefaultAsync(p => p.IdProduit == id);
             return produit;
         }
 
         // Ajout de GetByStringAsync pour chercher un produit par son nom
-        public async Task<ActionResult<Produit>> GetByStringAsync(string nom)
+        public async virtual Task<ActionResult<Produit>> GetByStringAsync(string nom)
         {
             var produit = await _context.Produits.FirstOrDefaultAsync(p => p.NomProduit.ToUpper() == nom.ToUpper());
             return produit;
         }
 
-        public async Task PostAsync(Produit entity)
+        public async virtual Task PostAsync(Produit entity)
         {
             await _context.Produits.AddAsync(entity);
             await _context.SaveChangesAsync();
         }
 
-        public async Task PutAsync(Produit produitToUpdate, Produit entity)
+        public async virtual Task PutAsync(Produit produitToUpdate, Produit entity)
         {
             _context.Entry(produitToUpdate).State = EntityState.Modified;
             produitToUpdate.NomProduit = entity.NomProduit;
             await _context.SaveChangesAsync();
         }
 
-        public async Task DeleteAsync(Produit entity)
+        public async virtual Task DeleteAsync(Produit entity)
         {
             _context.Produits.Remove(entity);
             await _context.SaveChangesAsync();

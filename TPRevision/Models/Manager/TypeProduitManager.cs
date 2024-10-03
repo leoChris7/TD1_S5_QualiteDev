@@ -17,38 +17,43 @@ namespace tprevision.Models.DataManager
             _context = context;
         }
 
-        public async Task<ActionResult<IEnumerable<TypeProduit>>> GetAllAsync()
+        public TypeProduitManager()
+        {
+
+        }
+
+        public async virtual Task<ActionResult<IEnumerable<TypeProduit>>> GetAllAsync()
         {
             var types = await _context.Types.ToListAsync();
             return new ActionResult<IEnumerable<TypeProduit>>(types);
         }
 
-        public async Task<ActionResult<TypeProduit>> GetByIdAsync(int id)
+        public async virtual Task<ActionResult<TypeProduit>> GetByIdAsync(int id)
         {
             var typeProduit = await _context.Types.FirstOrDefaultAsync(tp => tp.Idtypeproduit == id);
             return typeProduit != null ? new ActionResult<TypeProduit>(typeProduit) : new NotFoundResult();
         }
 
-        public async Task PostAsync(TypeProduit entity)
+        public async virtual Task PostAsync(TypeProduit entity)
         {
             await _context.Types.AddAsync(entity);
             await _context.SaveChangesAsync();
         }
 
-        public async Task PutAsync(TypeProduit typeProduitToUpdate, TypeProduit entity)
+        public async virtual Task PutAsync(TypeProduit typeProduitToUpdate, TypeProduit entity)
         {
             _context.Entry(typeProduitToUpdate).State = EntityState.Modified;
             typeProduitToUpdate.nomtypeproduit = entity.nomtypeproduit;
             await _context.SaveChangesAsync();
         }
 
-        public async Task DeleteAsync(TypeProduit entity)
+        public async virtual Task DeleteAsync(TypeProduit entity)
         {
             _context.Types.Remove(entity);
             await _context.SaveChangesAsync();
         }
 
-        public async Task<ActionResult<TypeProduit>> GetByStringAsync(string str)
+        public async virtual Task<ActionResult<TypeProduit>> GetByStringAsync(string str)
         {
             var typeProduit = await _context.Types.FirstOrDefaultAsync(tp => tp.nomtypeproduit == str);
             return typeProduit != null ? new ActionResult<TypeProduit>(typeProduit) : new NotFoundResult();

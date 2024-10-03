@@ -15,17 +15,23 @@ namespace tprevision.Controller
     {
         private readonly TypeProduitManager _typeProduitRepository;
 
+        [ActivatorUtilitiesConstructor]
         public TypeProduitsController(TypeProduitManager typeProduitRepository)
         {
             _typeProduitRepository = typeProduitRepository;
         }
 
-        // GET: api/TypeProduits
+        public TypeProduitsController()
+        {
+
+        }
+
         [HttpGet]
         public async Task<ActionResult<IEnumerable<TypeProduit>>> GetTypes()
         {
             return await _typeProduitRepository.GetAllAsync();
         }
+
 
         // GET: api/TypeProduits/5
         [HttpGet("{id}")]
@@ -34,7 +40,7 @@ namespace tprevision.Controller
         public async Task<ActionResult<TypeProduit>> GetTypeProduit(int id)
         {
             var typeProduit = await _typeProduitRepository.GetByIdAsync(id);
-            if (typeProduit.Result == null)
+            if (typeProduit.Value == null)
             {
                 return NotFound();
             }
@@ -51,7 +57,7 @@ namespace tprevision.Controller
             }
 
             var typeProduitToUpdate = await _typeProduitRepository.GetByIdAsync(id);
-            if (typeProduitToUpdate.Result == null)
+            if (typeProduitToUpdate.Value == null)
             {
                 return NotFound();
             }
@@ -78,7 +84,7 @@ namespace tprevision.Controller
         public async Task<IActionResult> DeleteTypeProduit(int id)
         {
             var typeProduit = await _typeProduitRepository.GetByIdAsync(id);
-            if (typeProduit.Result == null)
+            if (typeProduit.Value == null)
             {
                 return NotFound();
             }

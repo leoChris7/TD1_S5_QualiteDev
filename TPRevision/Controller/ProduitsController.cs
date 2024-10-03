@@ -13,9 +13,15 @@ namespace tprevision.Controller
     {
         private readonly ProduitManager produitManager;
 
+        [ActivatorUtilitiesConstructor]
         public ProduitsController(ProduitManager manager)
         {
             produitManager = manager;
+        }
+
+        public ProduitsController()
+        {
+
         }
 
         [HttpGet]
