@@ -1,5 +1,6 @@
 using GestionProduit_Client.Services;
 using GestionProduit_Client.Services.Interfaces;
+using GestionProduit_Client.ViewModel;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 
@@ -14,6 +15,8 @@ namespace GestionProduit_Client
             builder.RootComponents.Add<HeadOutlet>("head::after");
 
             builder.Services.AddScoped<IService, WSService>();
+            builder.Services.AddScoped<ProduitViewModel>();
+
             //builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
 
             await builder.Build().RunAsync();

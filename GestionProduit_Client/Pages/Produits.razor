@@ -1,15 +1,16 @@
 ﻿@page "/produits"
 @using GestionProduit_Client.Models
 @using GestionProduit_Client.Services.Interfaces
-@inject NavigationManager Navigation
+@using GestionProduit_Client.ViewModel
+@inject ProduitViewModel ViewModel
 
 <h3>Liste des Produits</h3>
 
-@if (lesProduits == null)
+@if (ViewModel.IsLoading)
 {
     <p>Chargement des produits...</p>
 }
-else if (lesProduits.Count == 0)
+else if (ViewModel.LesProduits == null || ViewModel.LesProduits.Count == 0)
 {
     <p>Aucun produit trouvé.</p>
 }
@@ -26,47 +27,47 @@ else
             </tr>
         </thead>
         <tbody>
-        @foreach (var produit in lesProduits)
-        {
-            <tr>
-                <td>@produit.NomProduit</td>
-                <td>@produit.Description</td>
-                <td>@produit.IdMarque</td>
-                <td>@produit.IdTypeProduit</td>
-                <td>
-                    <button @onclick="() => EditProduit(produit)">Modifier</button>
-                </td>
-            </tr>
-        }
+            @foreach (var produit in ViewModel.LesProduits)
+            {
+                <tr>
+                    <td>@produit.NomProduit</td>
+                    <td>@produit.Description</td>
+                    <td>@produit.IdMarque</td>
+                    <td>@produit.IdTypeProduit</td>
+                    <td>
+                        <button @onclick="() => ViewModel.EditProduit(produit)">Modifier</button>
+                    </td>
+                </tr>
+            }
         </tbody>
     </table>
 }
 
-<h3>@(IsEditMode ? "Modifier le Produit" : "Créer un Nouveau Produit")</h3>
+<h3>@(ViewModel.IsEditMode ? "Modifier le Produit" : "Créer un Nouveau Produit")</h3>
 
-<EditForm Model="@produitModel" OnValidSubmit="HandleValidSubmit">
+<EditForm Model="@ViewModel.ProduitModel" OnValidSubmit="ViewModel.HandleValidSubmitAsync">
     <DataAnnotationsValidator />
     <ValidationSummary />
 
     <div>
         <label>Nom du Produit:</label>
-        <InputText id="nomProduit" @bind-Value="produitModel.NomProduit" />
+        <InputText id="nomProduit" @bind-Value="ViewModel.ProduitModel.NomProduit" />
     </div>
     <div>
         <label>Description:</label>
-        <InputText id="description" @bind-Value="produitModel.Description" />
+        <InputText id="description" @bind-Value="ViewModel.ProduitModel.Description" />
     </div>
     <div>
         <label>Marque (Id):</label>
-        <InputNumber id="idMarque" @bind-Value="produitModel.IdMarque" />
+        <InputNumber id="idMarque" @bind-Value="ViewModel.ProduitModel.IdMarque" />
     </div>
     <div>
         <label>Type de Produit (Id):</label>
-        <InputNumber id="idTypeProduit" @bind-Value="produitModel.IdTypeProduit" />
+        <InputNumber id="idTypeProduit" @bind-Value="ViewModel.ProduitModel.IdTypeProduit" />
     </div>
 
-    <button type="submit">@((IsEditMode) ? "Modifier" : "Créer")</button>
-    <button type="button" @onclick="ResetForm">Annuler</button>
+    <button type="submit">@((ViewModel.IsEditMode) ? "Modifier" : "Créer")</button>
+    <button type="button" @onclick="ViewModel.ResetForm">Annuler</button>
 </EditForm>
 
 @code {
@@ -79,9 +80,9 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        // Fetch list of products when the page is initialized
-        lesProduits = await WSService.GetProduitsAsync("produits");
+        await ViewModel.LoadDataAsync();
     }
+    
 
     // Handle form submission for both creation and modification
     private async Task HandleValidSubmit()

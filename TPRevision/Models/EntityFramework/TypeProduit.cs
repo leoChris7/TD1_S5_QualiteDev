@@ -25,7 +25,7 @@ namespace GestionProduit_API.Models.EntityFramework
             }
 
             var other = obj as TypeProduit;
-            return other != null && Idtypeproduit == other.Idtypeproduit && Nomtypeproduit == other.Nomtypeproduit;
+            return other != null && Nomtypeproduit == other.Nomtypeproduit;
         }
 
         public override int GetHashCode()

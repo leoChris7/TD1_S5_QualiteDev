@@ -179,5 +179,53 @@ namespace Tests
             // Assert
             Assert.IsInstanceOfType(actionResult, typeof(NotFoundResult), "DeleteTypeProduit: Type de produit non trouvé, mais NotFound n'a pas été retourné.");
         }
+
+        [TestMethod]
+        public async Task AreTypesProduitsEquals_ReturnsTrue()
+        {
+            // Arrange
+            var type1 = new Marque
+            {
+                Idmarque = 1,
+                NomMarque = "Premier type"
+            };
+
+            var type2 = new Marque
+            {
+                Idmarque = 2,
+                NomMarque = "Premier type"
+            };
+
+            // Act
+            var areEqual = type1.Equals(type2);
+
+            // Assert
+            Assert.IsTrue(areEqual, "EqualsTypes: Les types de produit (sauf Id) ne sont pas égaux.");
+            Assert.IsNotNull(areEqual, "EqualsTypes: l'égalité des types de produit a retourné une valeur null");
+        }
+
+        [TestMethod]
+        public async Task AreTypesProduitsEquals_ReturnsFalse()
+        {
+            // Arrange
+            var marque1 = new TypeProduit
+            {
+                Idtypeproduit = 1,
+                Nomtypeproduit = "Lessieur"
+            };
+
+            var marque2 = new TypeProduit
+            {
+                Idtypeproduit = 2,
+                Nomtypeproduit = "Lessieur2"
+            };
+
+            // Act
+            var areEqual = marque1.Equals(marque2);
+
+            // Assert
+            Assert.IsFalse(areEqual, "EqualsTypes: Les types de produits (sauf Id) sont égaux.");
+            Assert.IsNotNull(areEqual, "EqualsTypes: l'égalité des types de produit a retourné une valeur null");
+        }
     }
 }

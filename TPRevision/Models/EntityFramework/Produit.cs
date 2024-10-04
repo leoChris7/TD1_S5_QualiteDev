@@ -68,7 +68,7 @@ namespace GestionProduit_API.Models.EntityFramework
             }
 
             var other = obj as Produit;
-            return other != null && IdProduit == other.IdProduit && NomProduit == other.NomProduit &&
+            return other != null && NomProduit == other.NomProduit &&
                     IdTypeProduit == other.IdTypeProduit && IdMarque == other.IdMarque &&
                     StockReel == other.StockReel && StockMin == other.StockMin && StockMax == other.StockMax;
         }
