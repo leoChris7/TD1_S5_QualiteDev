@@ -120,8 +120,14 @@ namespace Tests
                 .Setup(repo => repo.PutAsync(existingMarque, updatedMarque))
                 .Verifiable();
 
+            MarqueSansNavigation marqueSansNavigation = new()
+            {
+                Idmarque = updatedMarque.Idmarque,
+                NomMarque = updatedMarque.NomMarque
+            };
+
             // Act
-            var actionResult = await _marquesController.PutMarque(1, updatedMarque);
+            var actionResult = await _marquesController.PutMarque(1, marqueSansNavigation);
 
             // Assert
             Assert.IsInstanceOfType(actionResult, typeof(NoContentResult), "PutMarque: La marque n'a pas été mis à jour correctement.");
@@ -133,8 +139,14 @@ namespace Tests
             // Arrange
             var marque = new Marque { Idmarque = 1, NomMarque = "Marque A" };
 
+            MarqueSansNavigation marqueSansNavigation = new()
+            {
+                Idmarque = marque.Idmarque,
+                NomMarque = marque.NomMarque
+            };
+
             // Act
-            var actionResult = await _marquesController.PutMarque(2, marque);
+            var actionResult = await _marquesController.PutMarque(2, marqueSansNavigation);
 
             // Assert
             Assert.IsInstanceOfType(actionResult, typeof(BadRequestResult), "PutMarque: L'id a été validé alors qu'il n'existe pas. BadRequest aurait dû être retourné.");

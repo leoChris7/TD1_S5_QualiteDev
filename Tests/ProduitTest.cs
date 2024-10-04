@@ -191,5 +191,43 @@ namespace Tests
             Assert.IsInstanceOfType(actionResult, typeof(NotFoundResult), "DeleteProduit: Un produit non existant n'a pas retourné NotFound.");
         }
 
+        [TestMethod]
+        public async Task AreProduitsEquals_ReturnsTrue()
+        {
+            // Arrange
+            var produit1 = new Produit
+            {
+                IdProduit = 1,
+                NomProduit = "Produit A",
+                Description = "Description A",
+                NomPhoto = "photoA.png",
+                UriPhoto = "http://example.com/photoA.png",
+                IdTypeProduit = 2,
+                IdMarque = 3,
+                StockReel = 10,
+                StockMin = 5,
+                StockMax = 20
+            };
+
+            var produit2 = new Produit
+            {
+                IdProduit = 1,
+                NomProduit = "Produit A",
+                Description = "Description A",
+                NomPhoto = "photoA.png",
+                UriPhoto = "http://example.com/photoA.png",
+                IdTypeProduit = 2,
+                IdMarque = 3,
+                StockReel = 10,
+                StockMin = 5,
+                StockMax = 20
+            };
+
+            // Act
+            var areEqual = produit1.Equals(produit2);
+
+            // Assert
+            Assert.IsTrue(areEqual);
+        }
     }
 }

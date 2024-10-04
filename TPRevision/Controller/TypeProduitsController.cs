@@ -77,7 +77,7 @@ namespace GestionProduit_API.Controller
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> PutTypeProduit(int id, TypeProduit typeProduit)
+        public async Task<IActionResult> PutTypeProduit(int id, TypeProduitSansNavigation typeProduit)
         {
             if (id != typeProduit.Idtypeproduit)
             {
@@ -90,7 +90,13 @@ namespace GestionProduit_API.Controller
                 return NotFound();
             }
 
-            await _typeProduitRepository.PutAsync(typeProduitToUpdate.Value, typeProduit);
+            TypeProduit nouveauProduit = new TypeProduit
+            {
+                Idtypeproduit = typeProduit.Idtypeproduit,
+                Nomtypeproduit = typeProduit.nomtypeproduit
+            };
+
+            await _typeProduitRepository.PutAsync(typeProduitToUpdate.Value, nouveauProduit);
             return NoContent();
         }
 

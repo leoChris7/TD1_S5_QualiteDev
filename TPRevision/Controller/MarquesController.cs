@@ -2,6 +2,7 @@
 using GestionProduit_API.Models.ModelTemplate;
 using GestionProduit_API.Models.Manager;
 using GestionProduit_API.Models.EntityFramework;
+using NuGet.Protocol.Core.Types;
 
 namespace GestionProduit_API.Controller
 {
@@ -81,7 +82,7 @@ namespace GestionProduit_API.Controller
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> PutMarque(int id, Marque marque)
+        public async Task<IActionResult> PutMarque(int id, MarqueSansNavigation marque)
         {
             if (id != marque.Idmarque)
             {
@@ -92,7 +93,15 @@ namespace GestionProduit_API.Controller
             {
                 return NotFound();
             }
-            await marqueManager.PutAsync(marqueToUpdate.Value, marque);
+
+            // Conversion de la marque sans Navigation en un objet marque basique.
+            Marque marqueAJour = new Marque
+            {
+                Idmarque=marque.Idmarque,
+                NomMarque=marque.NomMarque
+            };
+
+            await marqueManager.PutAsync(marqueToUpdate.Value, marqueAJour);
             return NoContent();
         }
 
@@ -128,16 +137,18 @@ namespace GestionProduit_API.Controller
         [HttpDelete("{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteMarque(int id)
         {
-            var marqueToDelete = await marqueManager.GetByIdAsync(id);
-            if (marqueToDelete == null)
+            var marque = await marqueManager.GetByIdAsync(id);
+            if (marque.Value == null)
             {
-                return NotFound();
+                return NotFound(); // Retourne un NotFound si la marque n'existe pas
             }
 
-            await marqueManager.DeleteAsync(marqueToDelete.Value);
-            return NoContent();
+            await marqueManager.DeleteAsync(marque.Value);
+
+            return NoContent(); // Sinon, supprime et retourne NoContent
         }
     }
 }

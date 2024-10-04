@@ -1,7 +1,6 @@
 ﻿@page "/produits"
 @using GestionProduit_Client.Models
 @using GestionProduit_Client.Services.Interfaces
-@using GestionProduit_Client.Services
 @inject NavigationManager Navigation
 
 <h3>Liste des Produits</h3>
@@ -95,6 +94,7 @@ else
         else
         {
             // Create a new product
+            
             await WSService.PostProduitAsync("produits", produitModel);
         }
 

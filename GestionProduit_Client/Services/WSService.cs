@@ -10,26 +10,32 @@ namespace GestionProduit_Client.Services
         private readonly HttpClient _client;
 
 
-        public WSService(string? uri = "http://localhost:5012/api/")
+        public WSService(string uri = "http://localhost:5012/api/")
         {
-            _client = new HttpClient();
-            _client.BaseAddress = new Uri(uri);
+            _client = new HttpClient
+            {
+                BaseAddress = new Uri(uriString: uri)
+            };
             _client.DefaultRequestHeaders.Accept.Clear();
             _client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
         }
 
-        // GET: Fetch list of products
+        /**
+         *  <summary> Permet de récupérer les produits de façon asynchrone en requettant l'API </summary>
+         *  <param name="nomControleur">Controleur à requetter</param>
+         *  <returns>Liste des produits</returns>
+         */
         public async Task<List<Produit>> GetProduitsAsync(string? nomControleur)
         {
             try
             {
                 var response = await _client.GetFromJsonAsync<List<Produit>>(nomControleur);
-                return response ?? new List<Produit>();  // Return empty list if response is null
+                return response ?? [];
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error fetching products: {ex.Message}");
-                return new List<Produit>();  // Return empty list on error
+                Console.WriteLine("Erreur: ", ex);
+                return [];
             } 
         }
 

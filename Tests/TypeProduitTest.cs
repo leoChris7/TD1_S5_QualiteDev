@@ -51,7 +51,7 @@ namespace Tests
                 .ReturnsAsync(new ActionResult<TypeProduit>(typeProduit));
 
             // Act
-            var actionResult = await _typeProduitsController.GetTypeProduit(1);
+            var actionResult = await _typeProduitsController.GetTypeProduitById(1);
 
             // Assert
             Assert.IsNotNull(actionResult.Value, "GetTypeProduit: Le type de produit est null.");
@@ -67,7 +67,7 @@ namespace Tests
                 .ReturnsAsync(new ActionResult<TypeProduit>((TypeProduit)null));
 
             // Act
-            var actionResult = await _typeProduitsController.GetTypeProduit(999);
+            var actionResult = await _typeProduitsController.GetTypeProduitById(999);
 
             // Assert
             Assert.IsInstanceOfType(actionResult.Result, typeof(NotFoundResult), "GetTypeProduit: Type de produit non trouvé, mais NotFound n'a pas été retourné.");
@@ -117,8 +117,14 @@ namespace Tests
                 .Setup(repo => repo.PutAsync(existingTypeProduit, updatedTypeProduit))
                 .Verifiable();
 
+            TypeProduitSansNavigation produitSansNavigation = new TypeProduitSansNavigation
+            {
+                Idtypeproduit = updatedTypeProduit.Idtypeproduit,
+                nomtypeproduit = updatedTypeProduit.Nomtypeproduit
+            };
+
             // Act
-            var actionResult = await _typeProduitsController.PutTypeProduit(1, updatedTypeProduit);
+            var actionResult = await _typeProduitsController.PutTypeProduit(1, produitSansNavigation);
 
             // Assert
             Assert.IsInstanceOfType(actionResult, typeof(NoContentResult), "PutTypeProduit: Le type de produit n'a pas été mis à jour correctement.");
@@ -130,8 +136,14 @@ namespace Tests
             // Arrange
             var typeProduit = new TypeProduit { Idtypeproduit = 1, Nomtypeproduit = "Type A" };
 
+            TypeProduitSansNavigation produitSansNavigation = new TypeProduitSansNavigation
+            {
+                Idtypeproduit = typeProduit.Idtypeproduit,
+                nomtypeproduit = typeProduit.Nomtypeproduit
+            };
+
             // Act
-            var actionResult = await _typeProduitsController.PutTypeProduit(2, typeProduit);
+            var actionResult = await _typeProduitsController.PutTypeProduit(2, produitSansNavigation);
 
             // Assert
             Assert.IsInstanceOfType(actionResult, typeof(BadRequestResult), "PutTypeProduit: Un ID non valide a été accepté.");
