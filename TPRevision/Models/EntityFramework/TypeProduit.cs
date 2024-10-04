@@ -16,5 +16,21 @@ namespace GestionProduit_API.Models.EntityFramework
 
         [InverseProperty(nameof(Produit.IdTypeProduitNavigation))]
         public virtual ICollection<Produit> Produits { get; set; } = new List<Produit>();
+
+        public override bool Equals(object? obj)
+        {
+            if (obj == null || GetType() != obj.GetType())
+            {
+                return false;
+            }
+
+            var other = obj as TypeProduit;
+            return other != null && Idtypeproduit == other.Idtypeproduit && Nomtypeproduit == other.Nomtypeproduit;
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(Idtypeproduit, Nomtypeproduit);
+        }
     }
 }

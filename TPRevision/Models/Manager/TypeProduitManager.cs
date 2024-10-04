@@ -50,7 +50,7 @@ namespace GestionProduit_API.Models.Manager
             await _context.SaveChangesAsync();
         }
 
-        public async virtual Task<ActionResult<TypeProduit>> GetByStringAsync(string str)
+        public async virtual Task<ActionResult<TypeProduit>> GetByStringAsync(string? str)
         {
             var typeProduit = await _context.Types.FirstOrDefaultAsync(tp => tp.Nomtypeproduit == str);
             return typeProduit != null ? new ActionResult<TypeProduit>(typeProduit) : new NotFoundResult();

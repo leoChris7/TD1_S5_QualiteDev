@@ -14,47 +14,56 @@ namespace GestionProduit_API.Controller
         [ActivatorUtilitiesConstructor]
         public MarquesController(MarqueManager _manager)
         {
-            marqueManager = _manager;
+            marqueManager = _manager ?? throw new ArgumentNullException("Marque manager ne peut pas être null!");
         }
 
         public MarquesController()
         {
         }
 
+        /// <summary>
+        /// Récupère la liste de toutes les marques.
+        /// </summary>
+        /// <returns>Une liste de Marques.</returns>
         [HttpGet]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<ActionResult<IEnumerable<Marque>>> GetMarques()
         {
             var result = await marqueManager.GetAllAsync();
             return result;
         }
 
-        // GET: api/Marques/5
-        [HttpGet("{id}")]
+        /// <summary>
+        /// Récupère une marque par ID.
+        /// </summary>
+        /// <param name="id">L'ID de la marque.</param>
+        /// <returns>La Marque correspondant à l'ID.</returns>
+        [HttpGet("GetById/{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<Marque>> GetMarqueById(int id)
         {
             var marqueById = await marqueManager.GetByIdAsync(id);
-            //var utilisateur = await _context.Utilisateurs.FindAsync(id);
             if (marqueById.Value == null)
             {
                 return NotFound();
             }
-            
+
             return marqueById;
         }
 
-
-        // GET: api/Marques/5
-        [HttpGet]
-        [Route("[action]/{str}")]
-        [ActionName("GetMarqueByString")]
+        /// <summary>
+        /// Récupère une marque par nom.
+        /// </summary>
+        /// <param name="str">Le nom de la marque.</param>
+        /// <returns>La Marque correspondant au nom.</returns>
+        [HttpGet("GetByString/{str}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<Marque>> GetMarqueByString(String? str)
+        public async Task<ActionResult<Marque>> GetMarqueByString(string? str)
         {
             var marqueByString = await marqueManager.GetByStringAsync(str);
-            //var utilisateur = await _context.Utilisateurs.FindAsync(id);
             if (marqueByString == null)
             {
                 return NotFound();
@@ -62,12 +71,16 @@ namespace GestionProduit_API.Controller
             return marqueByString;
         }
 
-        // PUT: api/Marques/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        /// <summary>
+        /// Modifie une marque.
+        /// </summary>
+        /// <param name="id">L'ID de la marque à modifier.</param>
+        /// <param name="marque">Les nouvelles données de la marque.</param>
+        /// <returns>Aucune réponse si succès.</returns>
         [HttpPut("{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> PutMarque(int id, Marque marque)
         {
             if (id != marque.Idmarque)
@@ -79,14 +92,18 @@ namespace GestionProduit_API.Controller
             {
                 return NotFound();
             }
-            else
-            {
-                await marqueManager.PutAsync(marqueToUpdate.Value, marque);
-                return NoContent();
-            }
+            await marqueManager.PutAsync(marqueToUpdate.Value, marque);
+            return NoContent();
         }
 
+        /// <summary>
+        /// Crée une nouvelle marque.
+        /// </summary>
+        /// <param name="marque">Les informations de la nouvelle marque.</param>
+        /// <returns>La Marque créée.</returns>
         [HttpPost]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<Marque>> PostMarque(MarqueSansNavigation marque)
         {
             Marque NouvelleMarque = new()
@@ -103,24 +120,24 @@ namespace GestionProduit_API.Controller
             return CreatedAtAction("GetMarqueById", new { id = NouvelleMarque.Idmarque }, NouvelleMarque);
         }
 
-
-        // DELETE: api/Marques/5
+        /// <summary>
+        /// Supprime une marque.
+        /// </summary>
+        /// <param name="id">L'ID de la marque à supprimer.</param>
+        /// <returns>Aucune réponse si succès.</returns>
         [HttpDelete("{id}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> DeleteMarque(int id)
         {
-            var marque = await marqueManager.GetByIdAsync(id);
-            if (marque.Value == null) 
+            var marqueToDelete = await marqueManager.GetByIdAsync(id);
+            if (marqueToDelete == null)
             {
                 return NotFound();
             }
-            await marqueManager.DeleteAsync(marque.Value);
+
+            await marqueManager.DeleteAsync(marqueToDelete.Value);
             return NoContent();
         }
-
-
-        /*        private bool MarqueExists(int id)
-                {
-                    return _context.Marques.Any(e => e.Idmarque == id);
-                }*/
     }
 }

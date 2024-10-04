@@ -17,5 +17,21 @@ namespace GestionProduit_API.Models.EntityFramework
 
         [InverseProperty(nameof(Produit.IdMarqueNavigation))]
         public virtual ICollection<Produit> Produits { get; set; } = new List<Produit>();
+
+        public override bool Equals(object? obj)
+        {
+            if (obj == null || GetType() != obj.GetType())
+            {
+                return false;
+            }
+
+            var other = obj as Marque;
+            return other != null && Idmarque == other.Idmarque && NomMarque == other.NomMarque;
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(Idmarque, NomMarque);
+        }
     }
 }

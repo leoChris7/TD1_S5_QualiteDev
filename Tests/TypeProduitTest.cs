@@ -32,13 +32,14 @@ namespace Tests
 
             _mockRepository.Setup(repo => repo.GetAllAsync()).ReturnsAsync(types);
 
+            // Act
             var actionResult = await _typeProduitsController.GetTypes();
 
-            Assert.IsNotNull(actionResult.Value);
-            Assert.IsInstanceOfType(actionResult.Value, typeof(IEnumerable<TypeProduit>));
-            Assert.AreEqual(2, ((IEnumerable<TypeProduit>)actionResult.Value).Count());
+            // Assert
+            Assert.IsNotNull(actionResult.Value, "GetProduits: La liste des types de produits est null.");
+            Assert.IsInstanceOfType(actionResult.Value, typeof(IEnumerable<TypeProduit>), "GetProduits: Le type retourné n'est pas une liste de types de produits.");
+            Assert.AreEqual(2, ((IEnumerable<TypeProduit>)actionResult.Value).Count(), "GetProduits: Le nombre de types de produits retourné est incorrect.");
         }
-
 
         [TestMethod]
         public async Task GetTypeProduit_ExistingId_ReturnsTypeProduit()
@@ -53,11 +54,9 @@ namespace Tests
             var actionResult = await _typeProduitsController.GetTypeProduit(1);
 
             // Assert
-            Assert.IsNotNull(actionResult.Value);
-            Assert.AreEqual(typeProduit.Nomtypeproduit, actionResult.Value.Nomtypeproduit);
+            Assert.IsNotNull(actionResult.Value, "GetTypeProduit: Le type de produit est null.");
+            Assert.AreEqual(typeProduit.Nomtypeproduit, actionResult.Value.Nomtypeproduit, "GetTypeProduit: Le nom du type de produit ne correspond pas.");
         }
-
-
 
         [TestMethod]
         public async Task GetTypeProduit_NonExistingId_ReturnsNotFound()
@@ -71,7 +70,7 @@ namespace Tests
             var actionResult = await _typeProduitsController.GetTypeProduit(999);
 
             // Assert
-            Assert.IsInstanceOfType(actionResult.Result, typeof(NotFoundResult));
+            Assert.IsInstanceOfType(actionResult.Result, typeof(NotFoundResult), "GetTypeProduit: Type de produit non trouvé, mais NotFound n'a pas été retourné.");
         }
 
         [TestMethod]
@@ -98,9 +97,9 @@ namespace Tests
 
             // Assert
             var result = actionResult.Result as CreatedAtActionResult;
-            Assert.IsNotNull(result);
-            Assert.IsInstanceOfType(result.Value, typeof(TypeProduit));
-            Assert.AreEqual(typeProduit.Nomtypeproduit, ((TypeProduit)result.Value).Nomtypeproduit);
+            Assert.IsNotNull(result, "PostTypeProduit: Le type de produit n'a pas été créé.");
+            Assert.IsInstanceOfType(result.Value, typeof(TypeProduit), "PostTypeProduit: Le type de produit créé n'est pas du bon type.");
+            Assert.AreEqual(typeProduit.Nomtypeproduit, ((TypeProduit)result.Value).Nomtypeproduit, "PostTypeProduit: Le nom du type de produit créé est incorrect.");
         }
 
         [TestMethod]
@@ -122,7 +121,7 @@ namespace Tests
             var actionResult = await _typeProduitsController.PutTypeProduit(1, updatedTypeProduit);
 
             // Assert
-            Assert.IsInstanceOfType(actionResult, typeof(NoContentResult));
+            Assert.IsInstanceOfType(actionResult, typeof(NoContentResult), "PutTypeProduit: Le type de produit n'a pas été mis à jour correctement.");
         }
 
         [TestMethod]
@@ -135,7 +134,7 @@ namespace Tests
             var actionResult = await _typeProduitsController.PutTypeProduit(2, typeProduit);
 
             // Assert
-            Assert.IsInstanceOfType(actionResult, typeof(BadRequestResult));
+            Assert.IsInstanceOfType(actionResult, typeof(BadRequestResult), "PutTypeProduit: Un ID non valide a été accepté.");
         }
 
         [TestMethod]
@@ -151,12 +150,8 @@ namespace Tests
             var actionResult = await _typeProduitsController.DeleteTypeProduit(1);
 
             // Assert
-            Assert.IsInstanceOfType(actionResult, typeof(NoContentResult));
+            Assert.IsInstanceOfType(actionResult, typeof(NoContentResult), "DeleteTypeProduit: Le type de produit n'a pas été supprimé correctement.");
         }
-
-
-
-
 
         [TestMethod]
         public async Task DeleteTypeProduit_NonExistingId_ReturnsNotFound()
@@ -170,7 +165,7 @@ namespace Tests
             var actionResult = await _typeProduitsController.DeleteTypeProduit(999);
 
             // Assert
-            Assert.IsInstanceOfType(actionResult, typeof(NotFoundResult));
+            Assert.IsInstanceOfType(actionResult, typeof(NotFoundResult), "DeleteTypeProduit: Type de produit non trouvé, mais NotFound n'a pas été retourné.");
         }
     }
 }

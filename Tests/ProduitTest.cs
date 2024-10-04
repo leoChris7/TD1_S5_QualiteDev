@@ -23,69 +23,84 @@ namespace Tests
         [TestMethod]
         public async Task GetProduits_ReturnsListOfProduits()
         {
+            // Arrange
             var produits = new List<Produit>
-            {
-                new Produit { IdProduit = 1, NomProduit = "Produit A" },
-                new Produit { IdProduit = 2, NomProduit = "Produit B" }
-            };
+    {
+        new Produit { IdProduit = 1, NomProduit = "Produit A" },
+        new Produit { IdProduit = 2, NomProduit = "Produit B" }
+    };
 
             _mockRepository.Setup(repo => repo.GetAllAsync()).ReturnsAsync(produits);
 
+            // Act
             var actionResult = await _produitsController.GetProduits();
 
-            Assert.IsNotNull(actionResult.Value);
-            Assert.IsInstanceOfType(actionResult.Value, typeof(IEnumerable<Produit>));
-            Assert.AreEqual(2, ((IEnumerable<Produit>)actionResult.Value).Count());
+            // Assert
+            Assert.IsNotNull(actionResult.Value, "GetProduits: La liste de produits est null.");
+            Assert.IsInstanceOfType(actionResult.Value, typeof(IEnumerable<Produit>), "GetProduits: Le type retourné n'est pas une liste de produits.");
+            Assert.AreEqual(2, ((IEnumerable<Produit>)actionResult.Value).Count(), "GetProduits: Le nombre de produits retourné est incorrect.");
         }
 
         [TestMethod]
         public async Task GetProduitById_ExistingId_ReturnsProduit()
         {
+            // Arrange
             var produit = new Produit { IdProduit = 1, NomProduit = "Produit A" };
             _mockRepository.Setup(repo => repo.GetByIdAsync(1)).ReturnsAsync(new ActionResult<Produit>(produit));
 
+            // Act
             var actionResult = await _produitsController.GetProduitById(1);
 
-            Assert.IsNotNull(actionResult.Value);
-            Assert.AreEqual(produit.NomProduit, actionResult.Value.NomProduit);
+            // Assert
+            Assert.IsNotNull(actionResult.Value, "GetProduitById: Le produit est null.");
+            Assert.AreEqual(produit.NomProduit, actionResult.Value.NomProduit, "GetProduitById: Les produits ne sont pas égaux.");
         }
 
         [TestMethod]
         public async Task GetProduitById_NonExistingId_ReturnsNotFound()
         {
+            // Arrange
             _mockRepository.Setup(repo => repo.GetByIdAsync(It.IsAny<int>())).ReturnsAsync((Produit)null);
 
+            // Act
             var actionResult = await _produitsController.GetProduitById(999);
 
-            Assert.IsInstanceOfType(actionResult.Result, typeof(NotFoundResult));
+            // Assert
+            Assert.IsInstanceOfType(actionResult.Result, typeof(NotFoundResult), "GetProduitById: Produit non trouvé, mais NotFound n'a pas été retourné.");
         }
 
-        // Ajout du test pour GetProduitByString
         [TestMethod]
         public async Task GetProduitByString_ExistingNom_ReturnsProduit()
         {
+            // Arrange
             var produit = new Produit { IdProduit = 1, NomProduit = "Produit A" };
             _mockRepository.Setup(repo => repo.GetByStringAsync("Produit A")).ReturnsAsync(new ActionResult<Produit>(produit));
 
+            // Act
             var actionResult = await _produitsController.GetProduitByString("Produit A");
 
-            Assert.IsNotNull(actionResult.Value);
-            Assert.AreEqual(produit.NomProduit, actionResult.Value.NomProduit);
+            // Assert
+            Assert.IsNotNull(actionResult.Value, "GetProduitByString: Le produit est null.");
+            Assert.AreEqual(produit.NomProduit, actionResult.Value.NomProduit, "GetProduitByString: Les produits ne sont pas égaux.");
         }
 
         [TestMethod]
         public async Task GetProduitByString_NonExistingNom_ReturnsNotFound()
         {
+            // Arrange
             _mockRepository.Setup(repo => repo.GetByStringAsync(It.IsAny<string>())).ReturnsAsync((Produit)null);
 
+            // Act
             var actionResult = await _produitsController.GetProduitByString("Produit Inexistant");
 
-            Assert.IsInstanceOfType(actionResult.Result, typeof(NotFoundResult));
+            // Assert
+            Assert.IsInstanceOfType(actionResult.Result, typeof(NotFoundResult), "GetProduitByString: Produit non trouvé, mais NotFound n'a pas été retourné.");
         }
 
         [TestMethod]
         public async Task PostProduit_ValidModel_ReturnsCreatedAtAction()
         {
+            // Arrange
             var produit = new Produit { IdProduit = 1, NomProduit = "Produit A" };
             _mockRepository.Setup(repo => repo.PostAsync(It.IsAny<Produit>())).Verifiable();
 
@@ -103,57 +118,78 @@ namespace Tests
                 StockMax = produit.StockMax
             };
 
+            // Act
             var actionResult = await _produitsController.PostProduit(nouveauProduit);
 
+            // Assert
             var result = actionResult.Result as CreatedAtActionResult;
-            Assert.IsNotNull(result);
-            Assert.IsInstanceOfType(result.Value, typeof(Produit));
-            Assert.AreEqual(produit.NomProduit, ((Produit)result.Value).NomProduit);
+            Assert.IsNotNull(result, "PostProduit: Le produit n'a pas été créé.");
+            Assert.IsInstanceOfType(result.Value, typeof(Produit), "PostProduit: Le produit créé n'est pas du bon type.");
+            Assert.AreEqual(produit.NomProduit, ((Produit)result.Value).NomProduit, "PostProduit: Le nom du produit créé est incorrect.");
         }
 
         [TestMethod]
         public async Task PutProduit_ValidId_UpdatesProduit()
         {
+            // Arrange
             var existingProduit = new Produit { IdProduit = 1, NomProduit = "Produit A" };
             var updatedProduit = new Produit { IdProduit = 1, NomProduit = "Produit B" };
 
             _mockRepository.Setup(repo => repo.GetByIdAsync(1)).ReturnsAsync(new ActionResult<Produit>(existingProduit));
             _mockRepository.Setup(repo => repo.PutAsync(existingProduit, updatedProduit)).Verifiable();
 
-            var actionResult = await _produitsController.PutProduit(1, updatedProduit);
+            var produitSansNavigation = new ProduitSansNavigation
+            {
+                IdProduit = updatedProduit.IdProduit,
+                NomProduit = updatedProduit.NomProduit
+            };
 
-            Assert.IsInstanceOfType(actionResult, typeof(NoContentResult));
+            // Act
+            var actionResult = await _produitsController.PutProduit(1, produitSansNavigation);
+
+            // Assert
+            Assert.IsInstanceOfType(actionResult, typeof(NoContentResult), "PutProduit: Le produit n'a pas été mis à jour correctement.");
         }
 
         [TestMethod]
         public async Task PutProduit_InvalidId_ReturnsBadRequest()
         {
-            var produit = new Produit { IdProduit = 1, NomProduit = "Produit A" };
+            // Arrange
+            var produit = new ProduitSansNavigation { IdProduit = 1, NomProduit = "Produit A" };
 
+            // Act
             var actionResult = await _produitsController.PutProduit(2, produit);
 
-            Assert.IsInstanceOfType(actionResult, typeof(BadRequestResult));
+            // Assert
+            Assert.IsInstanceOfType(actionResult, typeof(BadRequestResult), "PutProduit: Un ID non valide a été accepté.");
         }
 
         [TestMethod]
         public async Task DeleteProduit_ExistingId_ReturnsNoContent()
         {
+            // Arrange
             var existingProduit = new Produit { IdProduit = 1, NomProduit = "Produit A" };
             _mockRepository.Setup(repo => repo.GetByIdAsync(1)).ReturnsAsync(existingProduit);
 
+            // Act
             var actionResult = await _produitsController.DeleteProduit(1);
 
-            Assert.IsInstanceOfType(actionResult, typeof(NoContentResult));
+            // Assert
+            Assert.IsInstanceOfType(actionResult, typeof(NoContentResult), "DeleteProduit: Le produit n'a pas été correctement supprimé.");
         }
 
         [TestMethod]
         public async Task DeleteProduit_NonExistingId_ReturnsNotFound()
         {
+            // Arrange
             _mockRepository.Setup(repo => repo.GetByIdAsync(999)).ReturnsAsync((Produit)null);
 
+            // Act
             var actionResult = await _produitsController.DeleteProduit(999);
 
-            Assert.IsInstanceOfType(actionResult, typeof(NotFoundResult));
+            // Assert
+            Assert.IsInstanceOfType(actionResult, typeof(NotFoundResult), "DeleteProduit: Un produit non existant n'a pas retourné NotFound.");
         }
+
     }
 }

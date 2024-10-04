@@ -39,9 +39,9 @@ namespace Tests
 
             // Assert
             var result = actionResult.Result as OkObjectResult;
-            Assert.IsNotNull(actionResult.Value);
-            Assert.IsInstanceOfType(actionResult.Value, typeof(IEnumerable<Marque>));
-            Assert.AreEqual(2, ((IEnumerable<Marque>)actionResult.Value).Count());
+            Assert.IsNotNull(actionResult.Value, "GetMarques: La liste de marques est null.");
+            Assert.IsInstanceOfType(actionResult.Value, typeof(IEnumerable<Marque>), "GetMarques: Le type de la liste de marques n'est pas correcte.");
+            Assert.AreEqual(2, ((IEnumerable<Marque>)actionResult.Value).Count(), "GetMarques: Un nombre incohérent de produits a été récupéré.");
         }
 
         [TestMethod]
@@ -57,8 +57,8 @@ namespace Tests
             var actionResult = await _marquesController.GetMarqueById(1);
 
             // Assert
-            Assert.IsNotNull(actionResult.Value);
-            Assert.AreEqual(marque.NomMarque, actionResult.Value.NomMarque);
+            Assert.IsNotNull(actionResult.Value, "GetMarqueById: La marque est null.");
+            Assert.AreEqual(marque.NomMarque, actionResult.Value.NomMarque, "GetMarqueById: Les marques ne sont pas égales.");
         }
 
         [TestMethod]
@@ -73,7 +73,7 @@ namespace Tests
             var actionResult = await _marquesController.GetMarqueById(999);
 
             // Assert
-            Assert.IsInstanceOfType(actionResult.Result, typeof(NotFoundResult));
+            Assert.IsInstanceOfType(actionResult.Result, typeof(NotFoundResult), "GetMarqueById: Une marque non trouvée n'a pas retourné NotFound.");
         }
 
         [TestMethod]
@@ -100,9 +100,9 @@ namespace Tests
 
             // Assert
             var result = actionResult.Result as CreatedAtActionResult;
-            Assert.IsNotNull(result);
-            Assert.IsInstanceOfType(result.Value, typeof(Marque));
-            Assert.AreEqual(marque.NomMarque, ((Marque)result.Value).NomMarque);
+            Assert.IsNotNull(result, "PostMarque: La marque n'a pas été créée, est null.");
+            Assert.IsInstanceOfType(result.Value, typeof(Marque), "PostMarque: La marque créée n'est pas de type Marque.");
+            Assert.AreEqual(marque.NomMarque, ((Marque)result.Value).NomMarque, "La marque créée ne correspond pas à la marque voulue.");
         }
 
         [TestMethod]
@@ -124,7 +124,7 @@ namespace Tests
             var actionResult = await _marquesController.PutMarque(1, updatedMarque);
 
             // Assert
-            Assert.IsInstanceOfType(actionResult, typeof(NoContentResult));
+            Assert.IsInstanceOfType(actionResult, typeof(NoContentResult), "PutMarque: La marque n'a pas été mis à jour correctement.");
         }
 
         [TestMethod]
@@ -137,7 +137,7 @@ namespace Tests
             var actionResult = await _marquesController.PutMarque(2, marque);
 
             // Assert
-            Assert.IsInstanceOfType(actionResult, typeof(BadRequestResult));
+            Assert.IsInstanceOfType(actionResult, typeof(BadRequestResult), "PutMarque: L'id a été validé alors qu'il n'existe pas. BadRequest aurait dû être retourné.");
         }
 
         [TestMethod]

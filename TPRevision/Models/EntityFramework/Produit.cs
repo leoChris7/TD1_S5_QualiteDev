@@ -60,5 +60,22 @@ namespace GestionProduit_API.Models.EntityFramework
         [Column("stockmax")]
         public int StockMax { get => stockMax; set => stockMax = value; }
 
+        public override bool Equals(object? obj)
+        {
+            if (obj == null || GetType() != obj.GetType())
+            {
+                return false;
+            }
+
+            var other = obj as Produit;
+            return other != null && IdProduit == other.IdProduit && NomProduit == other.NomProduit &&
+                    IdTypeProduit == other.IdTypeProduit && IdMarque == other.IdMarque &&
+                    StockReel == other.StockReel && StockMin == other.StockMin && StockMax == other.StockMax;
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(IdProduit, NomProduit, IdTypeProduit, IdMarque, StockReel, StockMin, StockMax);
+        }
     }
 }

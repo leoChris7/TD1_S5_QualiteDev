@@ -9,6 +9,7 @@ namespace GestionProduit_Client.Services
     {
         private readonly HttpClient _client;
 
+
         public WSService(string? uri = "http://localhost:5012/api/")
         {
             _client = new HttpClient();
@@ -29,7 +30,7 @@ namespace GestionProduit_Client.Services
             {
                 Console.WriteLine($"Error fetching products: {ex.Message}");
                 return new List<Produit>();  // Return empty list on error
-            }
+            } 
         }
 
         // POST: Add a new product

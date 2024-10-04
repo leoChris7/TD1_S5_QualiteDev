@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GestionProduit_API", "TPRev
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GestionProduit_Tests", "Tests\GestionProduit_Tests.csproj", "{0D718FB2-4A08-4C32-A7E4-BF913682EAAE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GestionProduit_Client", "GestionProduit_Client\GestionProduit_Client.csproj", "{08E45631-2A74-412F-AC38-2C7EDBC98285}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GestionProduit_Client", "GestionProduit_Client\GestionProduit_Client.csproj", "{08E45631-2A74-412F-AC38-2C7EDBC98285}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
