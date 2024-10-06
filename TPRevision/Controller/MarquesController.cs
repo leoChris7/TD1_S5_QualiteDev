@@ -137,6 +137,7 @@ namespace GestionProduit_API.Controller
         [HttpDelete("{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteMarque(int id)
         {
             var marque = await marqueManager.GetByIdAsync(id);

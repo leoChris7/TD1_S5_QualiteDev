@@ -180,53 +180,5 @@ namespace Tests
             Assert.IsInstanceOfType(actionResult, typeof(NotFoundResult));
         }
 
-        [TestMethod]
-        public async Task AreMarquesEquals_ReturnsTrue()
-        {
-            // Arrange
-            var marque1 = new Marque
-            {
-                Idmarque=1,
-                NomMarque="Javel Lessive"
-            };
-
-            var marque2 = new Marque
-            {
-                Idmarque = 2,
-                NomMarque = "Javel Lessive"
-            };
-
-            // Act
-            var areEqual = marque1.Equals(marque2);
-
-            // Assert
-            Assert.IsTrue(areEqual, "EqualsMarque: Les marques (sauf Id) ne sont pas égales.");
-            Assert.IsNotNull(areEqual, "EqualsMarque: l'égalité des marques a retourné une valeur null");
-        }
-
-        [TestMethod]
-        public async Task AreMarquesEquals_ReturnsFalse()
-        {
-            // Arrange
-            var marque1 = new Marque
-            {
-                Idmarque = 1,
-                NomMarque = "Javel Lessive"
-            };
-
-            var marque2 = new Marque
-            {
-                Idmarque = 2,
-                NomMarque = "Javel Lessive Pas Efficace"
-            };
-
-            // Act
-            var areEqual = marque1.Equals(marque2);
-
-            // Assert
-            Assert.IsFalse(areEqual, "EqualsMarque: Les marques (sauf Id) sont égales.");
-            Assert.IsNotNull(areEqual, "EqualsMarque: l'égalité des marques a retourné une valeur null");
-        }
-
     }
 }

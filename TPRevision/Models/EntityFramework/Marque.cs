@@ -26,7 +26,7 @@ namespace GestionProduit_API.Models.EntityFramework
             }
 
             var other = obj as Marque;
-            return other != null && NomMarque == other.NomMarque;
+            return other != null && Idmarque == other.Idmarque && NomMarque == other.NomMarque;
         }
 
         public override int GetHashCode()
