@@ -30,13 +30,13 @@ namespace GestionProduit_API.Models.EntityFramework
                 entity.Property(e => e.IdProduit)
                     .UseIdentityColumn();
  
-                entity.HasOne(d => d.IdMarqueNavigation)
+                entity.HasOne(d => d.Marque)
                     .WithMany(p => p.Produits)
                     .HasForeignKey(d => d.IdMarque)
                     .OnDelete(DeleteBehavior.Restrict)
                     .HasConstraintName("fk_pdt_mrq");
 
-                entity.HasOne(d => d.IdTypeProduitNavigation)
+                entity.HasOne(d => d.TypeProduit)
                     .WithMany(p => p.Produits)
                     .HasForeignKey(d => d.IdTypeProduit)
                     .OnDelete(DeleteBehavior.Restrict)

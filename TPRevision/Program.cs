@@ -1,6 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using GestionProduit_API.Models.Manager;
 using GestionProduit_API.Models.EntityFramework;
+using GestionProduit_API.Models.ModelTemplate;
+using GestionProduit_API.Models.DTO;
 
 var MyAllowSpecificOrigins = "AllowSpecificOrigins";
 
@@ -36,6 +38,13 @@ builder.Services.AddScoped<ProduitManager>();
 // Configurer Swagger pour la documentation de l'API
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddAutoMapper(cfg => {
+    cfg.CreateMap<Produit, ProduitSansNavigation>().ReverseMap();
+    cfg.CreateMap<Produit, ProduitDto>().ReverseMap();
+    cfg.CreateMap<Produit, ProduitDetailDto>().ReverseMap();
+    cfg.CreateMap<Marque, MarqueDto>().ReverseMap();
+    cfg.CreateMap<TypeProduit, TypeProduitDto>().ReverseMap();
+});
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

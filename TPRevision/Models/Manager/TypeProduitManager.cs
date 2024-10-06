@@ -27,7 +27,9 @@ namespace GestionProduit_API.Models.Manager
 
         public async virtual Task<ActionResult<TypeProduit>> GetByIdAsync(int id)
         {
-            var typeProduit = await _context.Types.FirstOrDefaultAsync(tp => tp.Idtypeproduit == id);
+            var typeProduit = await _context.Types
+                .Include(m=>m.Produits)
+                .FirstOrDefaultAsync(tp => tp.Idtypeproduit == id);
             return typeProduit != null ? new ActionResult<TypeProduit>(typeProduit) : new NotFoundResult();
         }
 

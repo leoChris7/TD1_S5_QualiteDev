@@ -15,7 +15,7 @@ namespace GestionProduit_API.Models.EntityFramework
         [Column("nommarque")]
         public string? NomMarque { get; set; }
 
-        [InverseProperty(nameof(Produit.IdMarqueNavigation))]
+        //[InverseProperty(nameof(Produit.IdMarqueNavigation))]
         public virtual ICollection<Produit> Produits { get; set; } = new List<Produit>();
 
         public override bool Equals(object? obj)

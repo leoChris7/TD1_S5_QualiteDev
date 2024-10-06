@@ -25,7 +25,10 @@ namespace GestionProduit_API.Models.Manager
 
         public async virtual Task<ActionResult<Marque>> GetByIdAsync(int id)
         {
-            var laMarque = await _context.Marques.FirstOrDefaultAsync(m => m.Idmarque == id);
+            var laMarque = await _context.Marques
+                .Include(m => m.Produits)
+                .FirstOrDefaultAsync(m => m.Idmarque == id);
+            
             return laMarque;
         }
 

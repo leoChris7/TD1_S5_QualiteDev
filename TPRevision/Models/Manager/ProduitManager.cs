@@ -46,7 +46,17 @@ namespace GestionProduit_API.Models.Manager
         public async virtual Task PutAsync(Produit produitToUpdate, Produit entity)
         {
             _context.Entry(produitToUpdate).State = EntityState.Modified;
+
             produitToUpdate.NomProduit = entity.NomProduit;
+            produitToUpdate.IdTypeProduit = entity.IdTypeProduit;
+            produitToUpdate.IdMarque = entity.IdMarque;
+            produitToUpdate.StockMax = entity.StockMax;
+            produitToUpdate.StockMin = entity.StockMin;
+            produitToUpdate.StockReel = entity.StockReel;
+            produitToUpdate.UriPhoto = entity.UriPhoto;
+            produitToUpdate.NomPhoto = entity.NomPhoto;
+            produitToUpdate.Description = entity.Description;
+
             await _context.SaveChangesAsync();
         }
 

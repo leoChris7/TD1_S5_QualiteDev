@@ -43,13 +43,13 @@ namespace GestionProduit_API.Models.EntityFramework
         [InverseProperty(nameof(Marque.Produits))]
         public int? IdMarque { get; set; }
 
-        [ForeignKey(nameof(IdTypeProduit))]
-        [InverseProperty(nameof(TypeProduit.Produits))]
-        public virtual TypeProduit IdTypeProduitNavigation { get; set; } = null!;
+        //[ForeignKey(nameof(IdTypeProduit))]
+        //[InverseProperty(nameof(TypeProduit.Produits))]
+        public virtual TypeProduit TypeProduit { get; set; } = null!;
 
-        [ForeignKey(nameof(IdMarque))]
-        [InverseProperty(nameof(Marque.Produits))]
-        public virtual Marque IdMarqueNavigation { get; set; } = null!;
+        //[ForeignKey(nameof(IdMarque))]
+        //[InverseProperty(nameof(Marque.Produits))]
+        public virtual Marque Marque { get; set; } = null!;
 
         [Column("stockreel")]
         public int StockReel { get => stockReel; set => stockReel = value; }

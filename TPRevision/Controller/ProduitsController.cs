@@ -151,6 +151,8 @@ namespace GestionProduit_API.Controller
                 return NotFound();
             }
 
+
+
             await produitManager.PutAsync(produitToUpdate.Value, nouveauProduit);
             return NoContent();
         }
