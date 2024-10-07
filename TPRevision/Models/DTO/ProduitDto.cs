@@ -1,6 +1,6 @@
 ﻿namespace GestionProduit_API.Models.DTO
 {
-    public class ProduitDto
+    public class ProduitDTO
     {
         public int Id { get; set; }
         public string? Nom { get; set; }

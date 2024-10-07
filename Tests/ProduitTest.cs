@@ -25,10 +25,10 @@ namespace Tests
         {
             // Arrange
             var produits = new List<Produit>
-    {
-        new Produit { IdProduit = 1, NomProduit = "Produit A" },
-        new Produit { IdProduit = 2, NomProduit = "Produit B" }
-    };
+            {
+                new Produit { IdProduit = 1, NomProduit = "Produit A" },
+                new Produit { IdProduit = 2, NomProduit = "Produit B" }
+            };
 
             _mockRepository.Setup(repo => repo.GetAllAsync()).ReturnsAsync(produits);
 

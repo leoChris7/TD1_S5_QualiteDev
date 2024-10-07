@@ -51,14 +51,20 @@ namespace GestionProduit_API.Models.EntityFramework
         //[InverseProperty(nameof(Marque.Produits))]
         public virtual Marque Marque { get; set; } = null!;
 
+        [Range(0, int.MaxValue, MinimumIsExclusive = false, MaximumIsExclusive = false)]
         [Column("stockreel")]
         public int StockReel { get => stockReel; set => stockReel = value; }
 
+        [Range(0, int.MaxValue, MinimumIsExclusive = false, MaximumIsExclusive = false)]
         [Column("stockmin")]
         public int StockMin { get => stockMin; set => stockMin = value; }
 
+        [Range(1, int.MaxValue, MinimumIsExclusive = false, MaximumIsExclusive = false)]
         [Column("stockmax")]
-        public int StockMax { get => stockMax; set => stockMax = value; }
+        public int StockMax { 
+            get => stockMax; 
+            set => stockMax = value; 
+        }
 
         public override bool Equals(object? obj)
         {

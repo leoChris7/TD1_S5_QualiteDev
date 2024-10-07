@@ -4,6 +4,7 @@ using GestionProduit_API.Models.Manager;
 using GestionProduit_API.Models.EntityFramework;
 using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.AspNetCore.Http;
+using AutoMapper;
 
 namespace GestionProduit_API.Controller
 {
@@ -12,9 +13,17 @@ namespace GestionProduit_API.Controller
     public class ProduitsController : ControllerBase
     {
         private readonly ProduitManager produitManager;
+        private readonly IMapper _mapper;
 
         // Constructeur utilisant l'injection de dépendances pour fournir un manager de produit
         [ActivatorUtilitiesConstructor]
+        public ProduitsController(ProduitManager manager, IMapper mapper)
+        {
+            produitManager = manager;
+            _mapper = mapper;
+        }
+
+
         public ProduitsController(ProduitManager manager)
         {
             produitManager = manager;
@@ -93,6 +102,7 @@ namespace GestionProduit_API.Controller
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<ActionResult<Produit>> PostProduit(ProduitSansNavigation produit)
         {
+
             var nouveauProduit = new Produit
             {
                 NomProduit = produit.NomProduit,
@@ -105,6 +115,9 @@ namespace GestionProduit_API.Controller
                 IdTypeProduit = produit.IdTypeProduit,
                 IdMarque = produit.IdMarque
             };
+            
+
+
 
             await produitManager.PostAsync(nouveauProduit);
             return CreatedAtAction("GetProduit", new { id = nouveauProduit.IdProduit }, nouveauProduit);

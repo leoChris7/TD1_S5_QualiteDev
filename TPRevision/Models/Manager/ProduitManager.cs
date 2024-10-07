@@ -38,7 +38,7 @@ namespace GestionProduit_API.Models.Manager
         }
 
         public async virtual Task PostAsync(Produit entity)
-        {
+        {            
             await _context.Produits.AddAsync(entity);
             await _context.SaveChangesAsync();
         }

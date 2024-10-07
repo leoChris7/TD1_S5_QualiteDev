@@ -9,7 +9,7 @@ namespace GestionProduit_API.Controller
     [ApiController]
     public class TypeProduitsController : ControllerBase
     {
-        private readonly TypeProduitManager _typeProduitRepository;
+        private readonly TypeProduitManager? _typeProduitRepository;
 
         [ActivatorUtilitiesConstructor]
         public TypeProduitsController(TypeProduitManager typeProduitRepository)
