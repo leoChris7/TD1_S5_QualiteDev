@@ -17,6 +17,7 @@ namespace GestionProduit_API
             CreateMap<MarqueDTO, Marque>();
             CreateMap<TypeProduitDTO, Type>();
 
+            // dans l'autre sens 
             CreateMap<Produit, ProduitSansNavigation>().ReverseMap();
             CreateMap<Produit, ProduitDTO>().ReverseMap();
             CreateMap<Produit, ProduitDetailDTO>().ReverseMap();
