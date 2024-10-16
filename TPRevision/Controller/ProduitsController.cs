@@ -103,21 +103,20 @@ namespace GestionProduit_API.Controller
         public async Task<ActionResult<Produit>> PostProduit(ProduitSansNavigation produit)
         {
 
-            var nouveauProduit = new Produit
-            {
-                NomProduit = produit.NomProduit,
-                Description = produit.Description,
-                StockMax = produit.StockMax,
-                StockMin = produit.StockMin,
-                StockReel = produit.StockReel,
-                UriPhoto = produit.UriPhoto,
-                NomPhoto = produit.NomPhoto,
-                IdTypeProduit = produit.IdTypeProduit,
-                IdMarque = produit.IdMarque
-            };
-            
+            //var nouveauProduit = new Produit
+            //{
+            //    NomProduit = produit.NomProduit,
+            //    Description = produit.Description,
+            //    StockMax = produit.StockMax,
+            //    StockMin = produit.StockMin,
+            //    StockReel = produit.StockReel,
+            //    UriPhoto = produit.UriPhoto,
+            //    NomPhoto = produit.NomPhoto,
+            //    IdTypeProduit = produit.IdTypeProduit,
+            //    IdMarque = produit.IdMarque
+            //};
 
-
+            var nouveauProduit = _mapper.Map<Produit>(produit);
 
             await produitManager.PostAsync(nouveauProduit);
             return CreatedAtAction("GetProduit", new { id = nouveauProduit.IdProduit }, nouveauProduit);

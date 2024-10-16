@@ -9,8 +9,19 @@ namespace GestionProduit_API
     {
         public AutoMapperProfile()
         {
-            CreateMap<Produit, ProduitDTO>();
-            CreateMap<Produit, ProduitSansNavigation>();
+            CreateMap<ProduitSansNavigation, Produit>();
+            CreateMap<MarqueSansNavigation, Marque>();
+            CreateMap<TypeProduitSansNavigation, Type>();
+            CreateMap<ProduitDTO, Produit>();
+            CreateMap<ProduitDetailDTO, Produit>();
+            CreateMap<MarqueDTO, Marque>();
+            CreateMap<TypeProduitDTO, Type>();
+
+            CreateMap<Produit, ProduitSansNavigation>().ReverseMap();
+            CreateMap<Produit, ProduitDTO>().ReverseMap();
+            CreateMap<Produit, ProduitDetailDTO>().ReverseMap();
+            CreateMap<Marque, MarqueDTO>().ReverseMap();
+            CreateMap<TypeProduit, TypeProduitDTO>().ReverseMap();
         }
     }
 }
