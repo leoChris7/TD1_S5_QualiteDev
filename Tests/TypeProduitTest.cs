@@ -1,4 +1,5 @@
-﻿using GestionProduit_API.Controller;
+﻿using AutoMapper;
+using GestionProduit_API.Controller;
 using GestionProduit_API.Models.EntityFramework;
 using GestionProduit_API.Models.Manager;
 using GestionProduit_API.Models.ModelTemplate;
@@ -12,12 +13,22 @@ namespace Tests
     {
         private Mock<TypeProduitManager> _mockRepository;
         private TypeProduitsController _typeProduitsController;
+        private IMapper _mapper;
 
         [TestInitialize]
         public void Setup()
         {
             _mockRepository = new Mock<TypeProduitManager>();
-            _typeProduitsController = new TypeProduitsController(_mockRepository.Object);
+
+            var config = new MapperConfiguration(cfg =>
+            {
+                cfg.CreateMap<ProduitSansNavigation, Produit>();
+                cfg.CreateMap<TypeProduitSansNavigation, TypeProduit>();  // Ajoute cette ligne
+            });
+
+            _mapper = config.CreateMapper();
+
+            _typeProduitsController = new TypeProduitsController(_mockRepository.Object, _mapper);
         }
 
         [TestMethod]
@@ -79,7 +90,7 @@ namespace Tests
             // Arrange
             var typeProduitSN = new TypeProduitSansNavigation
             {
-                nomtypeproduit = "Type Nouveau"
+                Nomtypeproduit = "Type Nouveau"
             };
 
             var typeProduit = new TypeProduit
@@ -120,7 +131,7 @@ namespace Tests
             TypeProduitSansNavigation produitSansNavigation = new TypeProduitSansNavigation
             {
                 Idtypeproduit = updatedTypeProduit.Idtypeproduit,
-                nomtypeproduit = updatedTypeProduit.Nomtypeproduit
+                Nomtypeproduit = updatedTypeProduit.Nomtypeproduit
             };
 
             // Act
@@ -139,7 +150,7 @@ namespace Tests
             TypeProduitSansNavigation produitSansNavigation = new TypeProduitSansNavigation
             {
                 Idtypeproduit = typeProduit.Idtypeproduit,
-                nomtypeproduit = typeProduit.Nomtypeproduit
+                Nomtypeproduit = typeProduit.Nomtypeproduit
             };
 
             // Act

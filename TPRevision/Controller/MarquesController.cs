@@ -3,6 +3,7 @@ using GestionProduit_API.Models.ModelTemplate;
 using GestionProduit_API.Models.Manager;
 using GestionProduit_API.Models.EntityFramework;
 using NuGet.Protocol.Core.Types;
+using AutoMapper;
 
 namespace GestionProduit_API.Controller
 {
@@ -11,8 +12,15 @@ namespace GestionProduit_API.Controller
     public class MarquesController : ControllerBase
     {
         private readonly MarqueManager? marqueManager;
+        private readonly IMapper _mapper;
 
         [ActivatorUtilitiesConstructor]
+        public MarquesController(MarqueManager manager, IMapper mapper)
+        {
+            marqueManager = manager;
+            _mapper = mapper;
+        }
+
         public MarquesController(MarqueManager _manager)
         {
             marqueManager = _manager ?? throw new ArgumentNullException("Marque manager ne peut pas être null!");
@@ -84,6 +92,9 @@ namespace GestionProduit_API.Controller
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> PutMarque(int id, MarqueSansNavigation marque)
         {
+
+            Marque marqueAJour = _mapper.Map<Marque>(marque);
+
             if (id != marque.Idmarque)
             {
                 return BadRequest();
@@ -93,13 +104,6 @@ namespace GestionProduit_API.Controller
             {
                 return NotFound();
             }
-
-            // Conversion de la marque sans Navigation en un objet marque basique.
-            Marque marqueAJour = new Marque
-            {
-                Idmarque=marque.Idmarque,
-                NomMarque=marque.NomMarque
-            };
 
             await marqueManager.PutAsync(marqueToUpdate.Value, marqueAJour);
             return NoContent();
@@ -115,10 +119,7 @@ namespace GestionProduit_API.Controller
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<Marque>> PostMarque(MarqueSansNavigation marque)
         {
-            Marque NouvelleMarque = new()
-            {
-                NomMarque = marque.NomMarque
-            };
+            Marque NouvelleMarque = _mapper.Map<Marque>(marque);
 
             if (!ModelState.IsValid)
             {

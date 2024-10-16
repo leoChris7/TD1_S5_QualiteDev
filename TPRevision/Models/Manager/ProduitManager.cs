@@ -2,67 +2,74 @@
 using Microsoft.AspNetCore.Mvc;
 using GestionProduit_API.Models.Repository;
 using GestionProduit_API.Models.EntityFramework;
+using AutoMapper;
+using GestionProduit_API.Models.DTO;
 
 namespace GestionProduit_API.Models.Manager
 {
-    public class ProduitManager : IDataRepository<Produit>
+    public class ProduitManager : IProduitRepository<Produit, ProduitDTO>
     {
         private readonly ProduitDbContext _context;
+        private readonly IMapper _mapper;
 
-        public ProduitManager(ProduitDbContext context)
+        public ProduitManager(ProduitDbContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
 
-        public ProduitManager()
+        // Récupérer tous les produits et les mapper vers ProduitDTO
+        public async Task<ActionResult<IEnumerable<ProduitDTO>>> GetAllAsync()
         {
-
+            var produits = await _context.Produits.Include(p=>p.TypeProduit).Include(p=>p.Marque).ToListAsync();
+            var produitsDto = _mapper.Map<IEnumerable<ProduitDTO>>(produits);
+            return new ActionResult<IEnumerable<ProduitDTO>>(produitsDto);
         }
 
-        public async virtual Task<ActionResult<IEnumerable<Produit>>> GetAllAsync()
+        // Récupérer un produit par ID et le mapper vers ProduitDTO
+        public async Task<ActionResult<ProduitDTO>> GetByIdAsync(int id)
         {
-            return await _context.Produits.ToListAsync();
+            var produit = await _context.Produits.FindAsync(id);
+            if (produit == null)
+            {
+                return new NotFoundResult();
+            }
+            var produitDto = _mapper.Map<ProduitDTO>(produit);
+            return new ActionResult<ProduitDTO>(produitDto);
         }
 
-        public async virtual Task<ActionResult<Produit>> GetByIdAsync(int id)
-        {
-            var produit = await _context.Produits.FirstOrDefaultAsync(p => p.IdProduit == id);
-            return produit;
-        }
-
-        // Ajout de GetByStringAsync pour chercher un produit par son nom
-        public async virtual Task<ActionResult<Produit>> GetByStringAsync(string nom)
+        // Récupérer un produit par nom et le mapper vers ProduitDTO
+        public async Task<ActionResult<ProduitDTO>> GetByStringAsync(string nom)
         {
             var produit = await _context.Produits.FirstOrDefaultAsync(p => p.NomProduit.ToUpper() == nom.ToUpper());
-            return produit;
+            if (produit == null)
+            {
+                return new NotFoundResult();
+            }
+            var produitDto = _mapper.Map<ProduitDTO>(produit);
+            return new ActionResult<ProduitDTO>(produitDto);
         }
 
-        public async virtual Task PostAsync(Produit entity)
-        {            
-            await _context.Produits.AddAsync(entity);
+        // Ajouter un nouveau produit à partir de ProduitDTO
+        public async Task PostAsync(ProduitDTO produitDto)
+        {
+            var produit = _mapper.Map<Produit>(produitDto);
+            await _context.Produits.AddAsync(produit);
             await _context.SaveChangesAsync();
         }
 
-        public async virtual Task PutAsync(Produit produitToUpdate, Produit entity)
+        // Mettre à jour un produit existant à partir de ProduitDTO
+        public async Task PutAsync(Produit produitToUpdate, ProduitDTO produitDto)
         {
-            _context.Entry(produitToUpdate).State = EntityState.Modified;
-
-            produitToUpdate.NomProduit = entity.NomProduit;
-            produitToUpdate.IdTypeProduit = entity.IdTypeProduit;
-            produitToUpdate.IdMarque = entity.IdMarque;
-            produitToUpdate.StockMax = entity.StockMax;
-            produitToUpdate.StockMin = entity.StockMin;
-            produitToUpdate.StockReel = entity.StockReel;
-            produitToUpdate.UriPhoto = entity.UriPhoto;
-            produitToUpdate.NomPhoto = entity.NomPhoto;
-            produitToUpdate.Description = entity.Description;
-
+            var produit = _mapper.Map<Produit>(produitDto);
+            _context.Entry(produitToUpdate).CurrentValues.SetValues(produit);
             await _context.SaveChangesAsync();
         }
 
-        public async virtual Task DeleteAsync(Produit entity)
+        // Supprimer un produit existant
+        public async Task DeleteAsync(Produit produit)
         {
-            _context.Produits.Remove(entity);
+            _context.Produits.Remove(produit);
             await _context.SaveChangesAsync();
         }
     }

@@ -7,22 +7,31 @@ namespace GestionProduit_API
 {
     public class AutoMapperProfile : Profile
     {
+        /**
+         * Méthode initilisant le mapper automatique des classe Produit, Marque et TypeProduit
+         */
+
         public AutoMapperProfile()
         {
-            CreateMap<ProduitSansNavigation, Produit>();
-            CreateMap<MarqueSansNavigation, Marque>();
-            CreateMap<TypeProduitSansNavigation, Type>();
-            CreateMap<ProduitDTO, Produit>();
-            CreateMap<ProduitDetailDTO, Produit>();
-            CreateMap<MarqueDTO, Marque>();
-            CreateMap<TypeProduitDTO, Type>();
+            // Mapping Produit <-> ProduitDTO
+            CreateMap<Produit, ProduitDTO>()
+                .ForMember(dest => dest.Type, opt => opt.MapFrom(src => src.TypeProduit.Nomtypeproduit))
+                .ForMember(dest => dest.Marque, opt => opt.MapFrom(src => src.Marque.NomMarque))
+                .ReverseMap();
 
-            // dans l'autre sens 
-            CreateMap<Produit, ProduitSansNavigation>().ReverseMap();
-            CreateMap<Produit, ProduitDTO>().ReverseMap();
-            CreateMap<Produit, ProduitDetailDTO>().ReverseMap();
+            // Mapping Produit <-> ProduitDetailDTO
+            CreateMap<Produit, ProduitDetailDTO>()
+                .ForMember(dest => dest.Type, opt => opt.MapFrom(src => src.TypeProduit.Nomtypeproduit))
+                .ForMember(dest => dest.Marque, opt => opt.MapFrom(src => src.Marque.NomMarque))
+                .ForMember(dest => dest.EnReappro, opt => opt.MapFrom(src => src.StockReel < src.StockMin))
+                .ReverseMap();
+
+            // Mapping pour Marque et TypeProduit
             CreateMap<Marque, MarqueDTO>().ReverseMap();
             CreateMap<TypeProduit, TypeProduitDTO>().ReverseMap();
         }
+        
+
+
     }
 }

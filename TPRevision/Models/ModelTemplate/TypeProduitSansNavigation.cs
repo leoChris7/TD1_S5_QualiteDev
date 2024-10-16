@@ -5,6 +5,6 @@
 
         public int Idtypeproduit { get; set; }
 
-        public string? nomtypeproduit { get; set; }
+        public string? Nomtypeproduit { get; set; }
     }
 }

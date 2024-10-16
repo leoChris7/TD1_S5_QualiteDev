@@ -1,10 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using GestionProduit_API.Models.ModelTemplate;
 using GestionProduit_API.Models.Manager;
 using GestionProduit_API.Models.EntityFramework;
-using Microsoft.AspNetCore.Mvc.Routing;
-using Microsoft.AspNetCore.Http;
+using GestionProduit_API.Models.DTO;
 using AutoMapper;
+using Microsoft.AspNetCore.Http;
 
 namespace GestionProduit_API.Controller
 {
@@ -12,21 +11,15 @@ namespace GestionProduit_API.Controller
     [ApiController]
     public class ProduitsController : ControllerBase
     {
-        private readonly ProduitManager produitManager;
+        private readonly ProduitManager _produitManager;
         private readonly IMapper _mapper;
 
-        // Constructeur utilisant l'injection de dépendances pour fournir un manager de produit
+        // Constructeur avec injection de dépendances
         [ActivatorUtilitiesConstructor]
         public ProduitsController(ProduitManager manager, IMapper mapper)
         {
-            produitManager = manager;
+            _produitManager = manager;
             _mapper = mapper;
-        }
-
-
-        public ProduitsController(ProduitManager manager)
-        {
-            produitManager = manager;
         }
 
         // Constructeur par défaut
@@ -35,22 +28,25 @@ namespace GestionProduit_API.Controller
         /// <summary>
         /// Récupère la liste de tous les produits.
         /// </summary>
-        /// <returns>Une liste de produits.</returns>
+        /// <returns>Une liste de produits DTO.</returns>
         /// <response code="200">Retourne la liste des produits.</response>
         /// <response code="500">Erreur interne du serveur.</response>
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<IEnumerable<Produit>>> GetProduits()
+        public async Task<ActionResult<IEnumerable<ProduitDTO>>> GetProduits()
         {
-            return await produitManager.GetAllAsync();
+            var produits = await _produitManager.GetAllAsync(); // Charge bien les produits avec les Include
+            var produitDtos = _mapper.Map<List<ProduitDTO>>(produits); // Map les entités vers DTO
+            return Ok(produitDtos);
         }
+
 
         /// <summary>
         /// Récupère un produit en fonction de son ID.
         /// </summary>
         /// <param name="id">L'ID du produit.</param>
-        /// <returns>Le produit correspondant à l'ID.</returns>
+        /// <returns>Le produit DTO correspondant à l'ID.</returns>
         /// <response code="200">Retourne le produit trouvé.</response>
         /// <response code="404">Produit introuvable.</response>
         /// <response code="500">Erreur interne du serveur.</response>
@@ -58,9 +54,9 @@ namespace GestionProduit_API.Controller
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<Produit>> GetProduitById(int id)
+        public async Task<ActionResult<ProduitDTO>> GetProduitById(int id)
         {
-            var produit = await produitManager.GetByIdAsync(id);
+            var produit = await _produitManager.GetByIdAsync(id);
             if (produit.Value == null)
             {
                 return NotFound();
@@ -72,7 +68,7 @@ namespace GestionProduit_API.Controller
         /// Récupère un produit en fonction de son nom.
         /// </summary>
         /// <param name="nom">Le nom du produit.</param>
-        /// <returns>Le produit correspondant au nom.</returns>
+        /// <returns>Le produit DTO correspondant au nom.</returns>
         /// <response code="200">Retourne le produit trouvé.</response>
         /// <response code="404">Produit introuvable.</response>
         /// <response code="500">Erreur interne du serveur.</response>
@@ -80,9 +76,9 @@ namespace GestionProduit_API.Controller
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<Produit>> GetProduitByString(string nom)
+        public async Task<ActionResult<ProduitDTO>> GetProduitByString(string nom)
         {
-            var produit = await produitManager.GetByStringAsync(nom);
+            var produit = await _produitManager.GetByStringAsync(nom);
             if (produit.Value == null)
             {
                 return NotFound();
@@ -91,42 +87,26 @@ namespace GestionProduit_API.Controller
         }
 
         /// <summary>
-        /// Ajoute un nouveau produit.
+        /// Ajoute un nouveau produit à partir d'un ProduitDTO.
         /// </summary>
-        /// <param name="produit">Le produit à ajouter.</param>
+        /// <param name="produitDto">Le produit DTO à ajouter.</param>
         /// <returns>Le produit ajouté avec son ID généré.</returns>
         /// <response code="201">Produit créé avec succès.</response>
         /// <response code="500">Erreur interne du serveur.</response>
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<Produit>> PostProduit(ProduitSansNavigation produit)
+        public async Task<ActionResult<ProduitDTO>> PostProduit(ProduitDTO produitDto)
         {
-
-            //var nouveauProduit = new Produit
-            //{
-            //    NomProduit = produit.NomProduit,
-            //    Description = produit.Description,
-            //    StockMax = produit.StockMax,
-            //    StockMin = produit.StockMin,
-            //    StockReel = produit.StockReel,
-            //    UriPhoto = produit.UriPhoto,
-            //    NomPhoto = produit.NomPhoto,
-            //    IdTypeProduit = produit.IdTypeProduit,
-            //    IdMarque = produit.IdMarque
-            //};
-
-            var nouveauProduit = _mapper.Map<Produit>(produit);
-
-            await produitManager.PostAsync(nouveauProduit);
-            return CreatedAtAction("GetProduit", new { id = nouveauProduit.IdProduit }, nouveauProduit);
+            await _produitManager.PostAsync(produitDto);
+            return CreatedAtAction("GetProduitById", new { id = produitDto.Id }, produitDto);
         }
 
         /// <summary>
-        /// Modifie un produit existant.
+        /// Modifie un produit existant à partir d'un ProduitDTO.
         /// </summary>
         /// <param name="id">L'ID du produit à modifier.</param>
-        /// <param name="produit">Les nouvelles données du produit.</param>
+        /// <param name="produitDto">Les nouvelles données du produit.</param>
         /// <returns>Une réponse HTTP indiquant le succès ou l'échec de la modification.</returns>
         /// <response code="204">Produit modifié avec succès.</response>
         /// <response code="400">Mauvaise requête, l'ID ne correspond pas.</response>
@@ -137,35 +117,22 @@ namespace GestionProduit_API.Controller
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> PutProduit(int id, ProduitSansNavigation produit)
+        public async Task<IActionResult> PutProduit(int id, ProduitDTO produitDto)
         {
-            var nouveauProduit = new Produit
-            {
-                NomProduit = produit.NomProduit,
-                Description = produit.Description,
-                StockMax = produit.StockMax,
-                StockMin = produit.StockMin,
-                StockReel = produit.StockReel,
-                UriPhoto = produit.UriPhoto,
-                NomPhoto = produit.NomPhoto,
-                IdTypeProduit = produit.IdTypeProduit,
-                IdMarque = produit.IdMarque
-            };
-
-            if (id != produit.IdProduit)
+            if (id != produitDto.Id)
             {
                 return BadRequest();
             }
 
-            var produitToUpdate = await produitManager.GetByIdAsync(id);
+            var produitToUpdate = await _produitManager.GetByIdAsync(id);
             if (produitToUpdate.Value == null)
             {
                 return NotFound();
             }
 
+            var produitD = _mapper.Map<Produit>(produitToUpdate.Value);
 
-
-            await produitManager.PutAsync(produitToUpdate.Value, nouveauProduit);
+            await _produitManager.PutAsync(produitD, produitDto);
             return NoContent();
         }
 
@@ -183,12 +150,16 @@ namespace GestionProduit_API.Controller
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> DeleteProduit(int id)
         {
-            var produit = await produitManager.GetByIdAsync(id);
+            var produit = await _produitManager.GetByIdAsync(id);
             if (produit.Value == null)
             {
                 return NotFound();
             }
-            await produitManager.DeleteAsync(produit.Value);
+
+            var produitD = _mapper.Map<Produit>(produit.Value);
+
+
+            await _produitManager.DeleteAsync(produitD);
             return NoContent();
         }
     }

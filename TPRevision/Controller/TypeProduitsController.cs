@@ -2,6 +2,7 @@
 using GestionProduit_API.Models.ModelTemplate;
 using GestionProduit_API.Models.Manager;
 using GestionProduit_API.Models.EntityFramework;
+using AutoMapper;
 
 namespace GestionProduit_API.Controller
 {
@@ -10,8 +11,15 @@ namespace GestionProduit_API.Controller
     public class TypeProduitsController : ControllerBase
     {
         private readonly TypeProduitManager? _typeProduitRepository;
+        private readonly IMapper _mapper;
 
         [ActivatorUtilitiesConstructor]
+        public TypeProduitsController(TypeProduitManager typeProduitRepository, IMapper mapper)
+        {
+            _typeProduitRepository = typeProduitRepository;
+            _mapper = mapper;
+        }
+
         public TypeProduitsController(TypeProduitManager typeProduitRepository)
         {
             _typeProduitRepository = typeProduitRepository;
@@ -79,6 +87,9 @@ namespace GestionProduit_API.Controller
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> PutTypeProduit(int id, TypeProduitSansNavigation typeProduit)
         {
+            // Mapping
+            TypeProduit nouveauProduit = _mapper.Map<TypeProduit>(typeProduit);
+
             if (id != typeProduit.Idtypeproduit)
             {
                 return BadRequest();
@@ -89,12 +100,6 @@ namespace GestionProduit_API.Controller
             {
                 return NotFound();
             }
-
-            TypeProduit nouveauProduit = new TypeProduit
-            {
-                Idtypeproduit = typeProduit.Idtypeproduit,
-                Nomtypeproduit = typeProduit.nomtypeproduit
-            };
 
             await _typeProduitRepository.PutAsync(typeProduitToUpdate.Value, nouveauProduit);
             return NoContent();
@@ -110,10 +115,7 @@ namespace GestionProduit_API.Controller
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<TypeProduit>> PostTypeProduit(TypeProduitSansNavigation typeProduit)
         {
-            var nouveauTypeProduit = new TypeProduit
-            {
-                Nomtypeproduit = typeProduit.nomtypeproduit
-            };
+            TypeProduit nouveauTypeProduit = _mapper.Map<TypeProduit>(typeProduit);
 
             await _typeProduitRepository.PostAsync(nouveauTypeProduit);
             return CreatedAtAction("GetTypeProduitById", new { id = nouveauTypeProduit.Idtypeproduit }, nouveauTypeProduit);

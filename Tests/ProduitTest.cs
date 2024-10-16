@@ -1,3 +1,4 @@
+using AutoMapper;
 using GestionProduit_API.Controller;
 using GestionProduit_API.Models.EntityFramework;
 using GestionProduit_API.Models.Manager;
@@ -12,12 +13,21 @@ namespace Tests
     {
         private Mock<ProduitManager> _mockRepository;
         private ProduitsController _produitsController;
+        private IMapper _mapper;
 
         [TestInitialize]
         public void Setup()
         {
             _mockRepository = new Mock<ProduitManager>();
-            _produitsController = new ProduitsController(_mockRepository.Object);
+
+            // Initialisation du Mapper
+            var config = new MapperConfiguration(cfg =>
+            {
+                cfg.CreateMap<ProduitSansNavigation, Produit>();
+            });
+            _mapper = config.CreateMapper();
+
+            _produitsController = new ProduitsController(_mockRepository.Object, _mapper);
         }
 
         [TestMethod]

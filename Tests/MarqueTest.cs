@@ -1,4 +1,5 @@
-﻿using GestionProduit_API.Controller;
+﻿using AutoMapper;
+using GestionProduit_API.Controller;
 using GestionProduit_API.Models.EntityFramework;
 using GestionProduit_API.Models.Manager;
 using GestionProduit_API.Models.ModelTemplate;
@@ -12,12 +13,21 @@ namespace Tests
     {
         private Mock<MarqueManager> _mockRepository;
         private MarquesController _marquesController;
+        private IMapper _mapper;
 
         [TestInitialize]
         public void Setup()
         {
             _mockRepository = new Mock<MarqueManager>();
-            _marquesController = new MarquesController(_mockRepository.Object);
+
+            // Initialisation du Mapper
+            var config = new MapperConfiguration(cfg =>
+            {
+                cfg.CreateMap<MarqueSansNavigation, Marque>();
+            });
+            _mapper = config.CreateMapper();
+
+            _marquesController = new MarquesController(_mockRepository.Object, _mapper);
         }
 
         [TestMethod]
