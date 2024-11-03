@@ -10,20 +10,6 @@
         public string? Nomphoto { get; set; }
         public string? Uriphoto { get; set; }
         public int? Stock { get; set; }
-
-        public bool EnReappro
-        {
-            get
-            {
-                return this.enReappro;
-            }
-
-            set
-            {
-                this.enReappro = value;
-            }
-        }
-
-        private bool enReappro;
+        public bool EnReappro { get; set; }
     }
 }

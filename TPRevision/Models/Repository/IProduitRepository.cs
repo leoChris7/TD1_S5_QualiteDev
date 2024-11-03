@@ -5,13 +5,13 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace GestionProduit_API.Models.Repository
 {
-    public interface IProduitRepository<TEntity, TDto>
+    public interface IProduitRepository<Produit, ProduitDto, ProduitDetailDto>
     {
-        Task<ActionResult<IEnumerable<TDto>>> GetAllAsync();
-        Task<ActionResult<TDto>> GetByIdAsync(int id);
-        Task<ActionResult<TDto>> GetByStringAsync(string str);
-        Task PostAsync(TDto entityDto);
-        Task PutAsync(TEntity entityToUpdate, TDto entityDto);
-        Task DeleteAsync(TEntity entity);
+        Task<ActionResult<IEnumerable<ProduitDto>>> GetAllAsync();
+        Task<ActionResult<ProduitDetailDto>> GetByIdAsync(int id);
+        Task<ActionResult<ProduitDetailDto>> GetByStringAsync(string str);
+        Task PostAsync(ProduitDto entityDto);
+        Task PutAsync(int id, ProduitDto entityDto);
+        Task DeleteAsync(int id);
     }
 }
