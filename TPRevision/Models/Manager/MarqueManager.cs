@@ -2,16 +2,22 @@
 using Microsoft.AspNetCore.Mvc;
 using GestionProduit_API.Models.Repository;
 using GestionProduit_API.Models.EntityFramework;
+using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
+using GestionProduit_API.Models.DTO;
+using AutoMapper;
 
 namespace GestionProduit_API.Models.Manager
 {
     public class MarqueManager : IDataRepository<Marque>
     {
-        private readonly ProduitDbContext? _context;
+        private readonly ProduitDbContext _context;
+        private readonly IMapper _mapper;
 
-        public MarqueManager(ProduitDbContext context)
+        public MarqueManager(ProduitDbContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
 
         public MarqueManager() { }
@@ -19,9 +25,20 @@ namespace GestionProduit_API.Models.Manager
 
         public async virtual Task<ActionResult<IEnumerable<Marque>>> GetAllAsync()
         {
-            var lesMarques = await _context.Marques.ToListAsync();
+            var lesMarques = await _context.Marques.Include(m=>m.Produits).ToListAsync();
             return lesMarques;
         }
+
+        public async virtual Task<ActionResult<IEnumerable<MarqueDTO>>> GetAllDTOAsync()
+        {
+            var lesMarques = await _context.Marques
+                .Include(m => m.Produits)
+                .ToListAsync();
+
+            var lesMarquesDTO = _mapper.Map<List<MarqueDTO>>(lesMarques);
+            return lesMarquesDTO;
+        }
+
 
         public async virtual Task<ActionResult<Marque>> GetByIdAsync(int id)
         {

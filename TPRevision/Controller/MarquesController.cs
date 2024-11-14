@@ -1,9 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using GestionProduit_API.Models.ModelTemplate;
 using GestionProduit_API.Models.Manager;
 using GestionProduit_API.Models.EntityFramework;
 using NuGet.Protocol.Core.Types;
 using AutoMapper;
+using GestionProduit_API.Models.DTO;
 
 namespace GestionProduit_API.Controller
 {
@@ -37,9 +37,9 @@ namespace GestionProduit_API.Controller
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<IEnumerable<Marque>>> GetMarques()
+        public async Task<ActionResult<IEnumerable<MarqueDTO>>> GetMarques()
         {
-            var result = await marqueManager.GetAllAsync();
+            var result = await marqueManager.GetAllDTOAsync();
             return result;
         }
 
@@ -117,18 +117,22 @@ namespace GestionProduit_API.Controller
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult<Marque>> PostMarque(MarqueSansNavigation marque)
+        public async Task<ActionResult<MarqueDTO>> PostMarque(MarqueSansNavigation marque)
         {
-            Marque NouvelleMarque = _mapper.Map<Marque>(marque);
-
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            await marqueManager.PostAsync(NouvelleMarque);
-            return CreatedAtAction("GetMarqueById", new { id = NouvelleMarque.Idmarque }, NouvelleMarque);
+            var nouvelleMarque = _mapper.Map<Marque>(marque);
+            await marqueManager.PostAsync(nouvelleMarque);
+
+            // Mapper l'objet Marque créé vers MarqueDTO pour inclure le NbProduits calculé
+            var marqueDto = _mapper.Map<MarqueDTO>(nouvelleMarque);
+
+            return CreatedAtAction("GetMarqueById", new { id = marqueDto.Id }, marqueDto);
         }
+
 
         /// <summary>
         /// Supprime une marque.

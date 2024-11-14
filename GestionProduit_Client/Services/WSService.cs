@@ -1,4 +1,5 @@
-﻿using GestionProduit_Client.Models;
+﻿using GestionProduit_API.Models.DTO;
+using GestionProduit_Client.Models;
 using GestionProduit_Client.Services.Interfaces;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
@@ -20,24 +21,38 @@ namespace GestionProduit_Client.Services
             _client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
         }
 
-        /**
-         *  <summary> Permet de récupérer les produits de façon asynchrone en requettant l'API </summary>
-         *  <param name="nomControleur">Controleur à requetter</param>
-         *  <returns>Liste des produits</returns>
-         */
         public async Task<List<Produit>> GetProduitsAsync(string? nomControleur)
         {
             try
             {
-                var response = await _client.GetFromJsonAsync<List<Produit>>(nomControleur);
-                return response ?? [];
+                // Récupère la réponse en tant que liste de ProduitDetailDTO depuis l'API
+                var response = await _client.GetFromJsonAsync<List<ProduitDetailDTO>>(nomControleur);
+
+                // Si la réponse est valide, on transforme la liste de ProduitDetailDTO en une liste de Produit
+                if (response != null)
+                {
+                    var formattedResponse = response.Select(p => new Produit
+                    {
+                        IdProduit = p.Id,
+                        NomProduit = p.Nom,
+                        Description = p.Description,
+                        IdMarque = null,
+                        IdTypeProduit = null
+                    }).ToList();
+
+                    return formattedResponse;
+                }
+
+                // Si la réponse est null, on retourne une liste vide
+                return new List<Produit>();
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Erreur: ", ex);
-                return [];
-            } 
+                Console.WriteLine($"Erreur: {ex.Message}");
+                return new List<Produit>(); // Retourne une liste vide en cas d'erreur
+            }
         }
+
 
         // POST: Add a new product
         public async Task<Produit> PostProduitAsync(string? nomControleur, Produit produit)

@@ -1,7 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using GestionProduit_API.Models.Manager;
 using GestionProduit_API.Models.EntityFramework;
-using GestionProduit_API.Models.ModelTemplate;
 using GestionProduit_API.Models.DTO;
 using GestionProduit_API;
 using Newtonsoft.Json;

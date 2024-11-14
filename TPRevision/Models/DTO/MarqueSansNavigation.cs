@@ -1,4 +1,4 @@
-﻿namespace GestionProduit_API.Models.ModelTemplate
+﻿namespace GestionProduit_API.Models.DTO
 {
     public class MarqueSansNavigation
     {

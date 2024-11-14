@@ -3,6 +3,7 @@ using GestionProduit_API.Models.Manager;
 using GestionProduit_API.Models.DTO;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using GestionProduit_API.Models.EntityFramework;
 
 namespace GestionProduit_API.Controllers
 {
@@ -12,9 +13,15 @@ namespace GestionProduit_API.Controllers
     {
         private readonly ProduitManager _produitManager;
 
+        [ActivatorUtilitiesConstructor]
         public ProduitsController(ProduitManager manager)
         {
             _produitManager = manager;
+        }
+
+        public ProduitsController()
+        {
+
         }
 
         /// <summary>
@@ -59,12 +66,12 @@ namespace GestionProduit_API.Controllers
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult<ProduitDTO>> PostProduit([FromBody] ProduitDTO produitDto)
+        public async Task<ActionResult<ProduitDetailDTO>> PostProduit(ProduitSansNavigation produit)
         {
-            if (produitDto == null) return BadRequest("Les données du produit sont manquantes.");
+            if (produit == null) return BadRequest("Les données du produit sont manquantes.");
 
-            await _produitManager.PostAsync(produitDto);
-            return CreatedAtAction(nameof(GetProduitById), new { id = produitDto.Id }, produitDto);
+            await _produitManager.PostAsync(produit);
+            return CreatedAtAction(nameof(GetProduitById), new { id = produit.IdProduit }, produit);
         }
 
 
@@ -75,13 +82,13 @@ namespace GestionProduit_API.Controllers
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> PutProduit(int id, ProduitDTO produitDto)
+        public async Task<IActionResult> PutProduit(int id, ProduitSansNavigation produit)
         {
-            if (id != produitDto.Id) return BadRequest("L'identifiant du produit ne correspond pas.");
+            if (id != produit.IdProduit) return BadRequest("L'identifiant du produit ne correspond pas.");
             var produitToUpdate = await _produitManager.GetByIdAsync(id);
             if (produitToUpdate.Result is NotFoundResult) return NotFound();
 
-            await _produitManager.PutAsync(id, produitDto);
+            await _produitManager.PutAsync(id, produit);
             return NoContent();
         }
 

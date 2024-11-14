@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using GestionProduit_API.Models.ModelTemplate;
 using GestionProduit_API.Models.Manager;
 using GestionProduit_API.Models.EntityFramework;
 using AutoMapper;
@@ -37,7 +36,7 @@ namespace GestionProduit_API.Controller
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<ActionResult<IEnumerable<TypeProduitDTO>>> GetTypes()
         {
-            return await _typeProduitRepository.GetAllAsync();
+            return await _typeProduitRepository.GetAllDTOAsync();
         }
 
         /// <summary>

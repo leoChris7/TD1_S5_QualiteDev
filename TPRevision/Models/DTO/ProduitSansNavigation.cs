@@ -1,4 +1,4 @@
-﻿namespace GestionProduit_API.Models.ModelTemplate
+﻿namespace GestionProduit_API.Models.DTO
 {
     public class ProduitSansNavigation
     {
@@ -134,12 +134,12 @@
         {
             get
             {
-                return this.stockMax;
+                return stockMax;
             }
 
             set
             {
-                this.stockMax = value;
+                stockMax = value;
             }
         }
     }

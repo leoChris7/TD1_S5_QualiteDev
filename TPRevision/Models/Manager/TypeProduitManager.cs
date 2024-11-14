@@ -7,7 +7,7 @@ using AutoMapper;
 
 namespace GestionProduit_API.Models.Manager
 {
-    public class TypeProduitManager : ICategoryRepository<TypeProduit, TypeProduitDTO>
+    public class TypeProduitManager : IDataRepository<TypeProduit>
     {
         private readonly ProduitDbContext _context;
         private readonly IMapper _mapper;
@@ -23,21 +23,37 @@ namespace GestionProduit_API.Models.Manager
 
         }
 
-        public async virtual Task<ActionResult<IEnumerable<TypeProduitDTO>>> GetAllAsync()
+        public async virtual Task<ActionResult<IEnumerable<TypeProduit>>> GetAllAsync()
         {
             var types = await _context.Types
-                .Include(p => p.Produits.Count)
+                .Include(p => p.Produits)
                 .ToListAsync();
-                                         
-            var produitsDto = _mapper.Map<List<TypeProduitDTO>>(types);
-            return produitsDto;
+
+            return types;
+        }
+
+        public async virtual Task<ActionResult<IEnumerable<TypeProduitDTO>>> GetAllDTOAsync()
+        {
+            var lesTypesdeProduit = await _context.Types
+                .Include(m => m.Produits)
+                .ToListAsync();
+
+            var lesTypesdeProduitDTO = _mapper.Map<List<TypeProduitDTO>>(lesTypesdeProduit);
+            return lesTypesdeProduitDTO;
         }
 
         public async virtual Task<ActionResult<TypeProduit>> GetByIdAsync(int id)
         {
             var typeProduit = await _context.Types
-                .Include(m=>m.Produits)
+                .Include(m => m.Produits)
                 .FirstOrDefaultAsync(tp => tp.Idtypeproduit == id);
+
+            return typeProduit != null ? new ActionResult<TypeProduit>(typeProduit) : new NotFoundResult();
+        }
+
+        public async virtual Task<ActionResult<TypeProduit>> GetByStringAsync(string str)
+        {
+            var typeProduit = await _context.Types.FirstOrDefaultAsync(tp => tp.Nomtypeproduit == str);
             return typeProduit != null ? new ActionResult<TypeProduit>(typeProduit) : new NotFoundResult();
         }
 
@@ -47,10 +63,10 @@ namespace GestionProduit_API.Models.Manager
             await _context.SaveChangesAsync();
         }
 
-        public async virtual Task PutAsync(TypeProduit typeProduitToUpdate, TypeProduit entity)
+        public async virtual Task PutAsync(TypeProduit entityToUpdate, TypeProduit entity)
         {
-            _context.Entry(typeProduitToUpdate).State = EntityState.Modified;
-            typeProduitToUpdate.Nomtypeproduit = entity.Nomtypeproduit;
+            _context.Entry(entityToUpdate).State = EntityState.Modified;
+            entityToUpdate.Nomtypeproduit = entity.Nomtypeproduit;
             await _context.SaveChangesAsync();
         }
 
@@ -58,12 +74,6 @@ namespace GestionProduit_API.Models.Manager
         {
             _context.Types.Remove(entity);
             await _context.SaveChangesAsync();
-        }
-
-        public async virtual Task<ActionResult<TypeProduit>> GetByStringAsync(string? str)
-        {
-            var typeProduit = await _context.Types.FirstOrDefaultAsync(tp => tp.Nomtypeproduit == str);
-            return typeProduit != null ? new ActionResult<TypeProduit>(typeProduit) : new NotFoundResult();
         }
     }
 }
