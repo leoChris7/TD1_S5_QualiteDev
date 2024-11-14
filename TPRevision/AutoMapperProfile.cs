@@ -32,10 +32,16 @@ namespace GestionProduit_API
 
             // Mapping Marque et TypeProduit
             CreateMap<Marque, MarqueDTO>()
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Idmarque))
+                .ForMember(dest => dest.Nom, opt => opt.MapFrom(src => src.NomMarque))
                 .ForMember(dest => dest.NbProduits, opt => opt.MapFrom(src => src.Produits.Count))
-                .ReverseMap();
+                .ReverseMap()
+                .ForMember(dest => dest.Idmarque, opt => opt.MapFrom(src => src.Id))
+                .ForMember(dest => dest.NomMarque, opt => opt.MapFrom(src => src.Nom));
 
             CreateMap<TypeProduit, TypeProduitDTO>()
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Idtypeproduit))
+                .ForMember(dest => dest.Nom, opt => opt.MapFrom(src => src.Nomtypeproduit))
                 .ForMember(dest => dest.NbProduits, opt => opt.MapFrom(src => src.Produits.Count))
                 .ReverseMap();
         }

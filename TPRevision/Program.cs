@@ -4,6 +4,7 @@ using GestionProduit_API.Models.EntityFramework;
 using GestionProduit_API.Models.ModelTemplate;
 using GestionProduit_API.Models.DTO;
 using GestionProduit_API;
+using Newtonsoft.Json;
 
 var MyAllowSpecificOrigins = "AllowSpecificOrigins";
 
@@ -21,6 +22,8 @@ builder.Services.AddCors(options =>
 });
 
 
+
+
 // Récupérer la chaîne de connexion depuis le fichier de configuration
 var connectionString = builder.Configuration.GetConnectionString("ProduitDbConnection");
 
@@ -29,7 +32,10 @@ var connectionString = builder.Configuration.GetConnectionString("ProduitDbConne
 builder.Services.AddDbContext<ProduitDbContext>(options =>
     options.UseNpgsql(connectionString));
 
-builder.Services.AddControllers();
+builder.Services.AddControllers().AddNewtonsoftJson(options =>
+{
+    options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+});
 
 // Ajouter les services Scoped pour les managers
 builder.Services.AddScoped<MarqueManager>();

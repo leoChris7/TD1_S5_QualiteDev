@@ -2,16 +2,20 @@
 using Microsoft.EntityFrameworkCore;
 using GestionProduit_API.Models.Repository;
 using GestionProduit_API.Models.EntityFramework;
+using GestionProduit_API.Models.DTO;
+using AutoMapper;
 
 namespace GestionProduit_API.Models.Manager
 {
-    public class TypeProduitManager : IDataRepository<TypeProduit>
+    public class TypeProduitManager : ICategoryRepository<TypeProduit, TypeProduitDTO>
     {
         private readonly ProduitDbContext _context;
+        private readonly IMapper _mapper;
 
-        public TypeProduitManager(ProduitDbContext context)
+        public TypeProduitManager(ProduitDbContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
 
         public TypeProduitManager()
@@ -19,10 +23,14 @@ namespace GestionProduit_API.Models.Manager
 
         }
 
-        public async virtual Task<ActionResult<IEnumerable<TypeProduit>>> GetAllAsync()
+        public async virtual Task<ActionResult<IEnumerable<TypeProduitDTO>>> GetAllAsync()
         {
-            var types = await _context.Types.ToListAsync();
-            return new ActionResult<IEnumerable<TypeProduit>>(types);
+            var types = await _context.Types
+                .Include(p => p.Produits.Count)
+                .ToListAsync();
+                                         
+            var produitsDto = _mapper.Map<List<TypeProduitDTO>>(types);
+            return produitsDto;
         }
 
         public async virtual Task<ActionResult<TypeProduit>> GetByIdAsync(int id)

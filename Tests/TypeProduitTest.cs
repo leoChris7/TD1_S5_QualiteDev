@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using GestionProduit_API.Controller;
+using GestionProduit_API.Models.DTO;
 using GestionProduit_API.Models.EntityFramework;
 using GestionProduit_API.Models.Manager;
 using GestionProduit_API.Models.ModelTemplate;

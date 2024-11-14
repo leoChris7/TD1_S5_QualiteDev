@@ -3,6 +3,7 @@ using GestionProduit_API.Models.ModelTemplate;
 using GestionProduit_API.Models.Manager;
 using GestionProduit_API.Models.EntityFramework;
 using AutoMapper;
+using GestionProduit_API.Models.DTO;
 
 namespace GestionProduit_API.Controller
 {
@@ -34,7 +35,7 @@ namespace GestionProduit_API.Controller
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<IEnumerable<TypeProduit>>> GetTypes()
+        public async Task<ActionResult<IEnumerable<TypeProduitDTO>>> GetTypes()
         {
             return await _typeProduitRepository.GetAllAsync();
         }
@@ -85,12 +86,12 @@ namespace GestionProduit_API.Controller
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> PutTypeProduit(int id, TypeProduitSansNavigation typeProduit)
+        public async Task<IActionResult> PutTypeProduit(int id, TypeProduitDTO typeProduit)
         {
             // Mapping
             TypeProduit nouveauProduit = _mapper.Map<TypeProduit>(typeProduit);
 
-            if (id != typeProduit.Idtypeproduit)
+            if (id != typeProduit.Id)
             {
                 return BadRequest();
             }
@@ -113,12 +114,12 @@ namespace GestionProduit_API.Controller
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult<TypeProduit>> PostTypeProduit(TypeProduitSansNavigation typeProduit)
+        public async Task<ActionResult<TypeProduit>> PostTypeProduit(TypeProduit typeProduit)
         {
-            TypeProduit nouveauTypeProduit = _mapper.Map<TypeProduit>(typeProduit);
+            //TypeProduit nouveauTypeProduit = _mapper.Map<TypeProduit>(typeProduit);
 
-            await _typeProduitRepository.PostAsync(nouveauTypeProduit);
-            return CreatedAtAction("GetTypeProduitById", new { id = nouveauTypeProduit.Idtypeproduit }, nouveauTypeProduit);
+            await _typeProduitRepository.PostAsync(typeProduit);
+            return CreatedAtAction("GetTypeProduitById", new { id = typeProduit.Idtypeproduit }, typeProduit);
         }
 
         /// <summary>

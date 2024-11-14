@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 namespace GestionProduit_API.Models.EntityFramework
@@ -15,6 +16,7 @@ namespace GestionProduit_API.Models.EntityFramework
         public string? Nomtypeproduit { get; set; }
 
         //[InverseProperty(nameof(Produit.IdTypeProduitNavigation))]
+        [JsonIgnore]
         public virtual ICollection<Produit> Produits { get; set; } = new List<Produit>();
 
         public override bool Equals(object? obj)
